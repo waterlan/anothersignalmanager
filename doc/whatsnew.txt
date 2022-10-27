@@ -1,0 +1,142 @@
+Oct 21 2022: Version 2.0.0-alpha1
+
+   - Rewrote ASM in Java using JavaFX graphics.
+   - Each signal is shown in its own window.
+   - Menus and dialogs for each command.
+   - Fixed bode magnitude plot for very low values. Plot is cut at -100 dB.
+
+
+Jul 1 2022: Version 1.1.3
+
+   In 2021 I started porting ASM to Java + JavaFX to make a good interface.
+   During this work I found a some bugs which are fixed in this version.
+
+   This is the last C based version. Development will go on in the Java
+   version.
+
+
+   - Fixed high CPU load when waiting for input.
+   - Fixed wrong values at Y-axis when the maximum value was smaller than
+     the absolute minimal value.
+   - Fixed Blackman, Hamming, Hanning, and Kaiser windows.
+   - Added missing command for window Block.
+   - Fixed shift function for signals with more than one record.
+   - Fixed rotate function for negative rotation.
+   - Fixed command description of correlation and convolution in the manual.
+   - Updated doc/makefile for PDF generation from LaTeX.
+   - Removed the PostScript documentation file.
+   - The default sample rate is 10240 Hz.
+   - The default screen resolution is 1024x768.
+
+   The following keyboard shortcuts have been added (The Escape key and
+   several function keys of my laptop are broken :) ).
+
+   - ALT-X and CTRL-C bring you to the title screen.
+   - SHIFT-<Left> and SHIFT-<Right> show the previous and next signal.
+   - CTRL-<Left> and CTRL-<Right> to zoom out and in.
+
+   Removed the DOS and Linux binaries.
+   The Windows binary has been built with MinGW-w64 gcc 4.9.2 (i686-w64-mingw32)
+   and Allegro 4.4.2. I was not able to build Allegro 4.4.2 myself anymore. I took
+   the Allegro 4.4.2 binary package for MinGW 4.5.2 from https://www.allegro.cc/
+
+
+Jul 28 2015: Version 1.1.2
+
+   I did not look at ASM for a long time. I noticed the Windows compiled
+   program does not run on Windows 8, so I recompiled it with newer tools.
+
+   - Fixed slow printing of text on Windows.
+   - Keys <Left> and <Right> now scroll the displayed signal left and right.
+   - Removed i586 (Pentium) target from makefiles.
+   - Use MinGW-w64 32 bit compiler from the MSYS2 project.
+     http://sourceforge.net/projects/msys2
+     Using gcc 4.9.2, Target: i686-w64-mingw32
+   - Use Allegro 4.4.2 library.
+     MSYS2 already includes DirectX. No need to use dx70_mgw.zip.
+     To build Allegro with MSYS2 do:
+
+        mkdir Build; cd Build
+        cmake \
+        -G "MSYS Makefiles" \
+        -DCMAKE_SYSTEM_PREFIX_PATH:PATH=/mingw32/i686-w64-mingw32/ \
+        ..
+        make ; make install
+
+
+   If I had more time I would make a good
+   interface using the QT library.
+
+
+Sep 8 2007: Version 1.1.1
+
+   - Updated documentation, chapter Introduction.
+
+
+Jun 27 2007: version 1.1
+
+   - Use Allegro 4.2.1 library.
+   - Fix buffer overflow, in signal name.
+   - Signal image can be saved in BMP format.
+   - Target Pentium processor.
+   - Build new Windows and Linux version.
+   - Rebuild DOS version.
+   - Updated documentation.
+   - The following compilers have been used:
+     DOS    : DJGPP 2.03, gcc 3.4.4
+     Windows: MinGW 4.1, gcc 3.4.2
+     Linux  : Red Hat Linux 9.0, gcc 3.2.2
+
+
+Oct 8 1998: Version 1.0
+
+   - Retyped the documentation in a condensed version in LaTeX.
+     The original documentation was written on an Acorn Archimedes
+     computer, in Dutch. I have only a paper copy.
+     Added PostScript and PDF documents.
+
+Aug 25 1997
+
+   - Caluculation functons copy the HScale factor of the source
+     signal to the target signal.
+
+Aug 20 1997
+
+   - readwav command added.
+
+Aug 19 1997
+
+   - Command and poll prompt added.
+
+Aug 11 1997
+
+   - recompiled Allegro library.
+     FIX_SHIFT define in file misc.s set 16.
+
+Jul 18 1997
+
+   - Function XscaleCi in plotcomm.c
+     1. Build in check for scalefactor, may not be zero. This
+        can happen if you type by accident e.g. xscale 0,5
+        in stead of xscale 0.5
+   - Function LnCi and LogCi in calculat.c
+     1. check if the signal has values that are negative or zero.
+
+Jul 17 1997
+
+   - Function BitmapCi in commnd1.c
+     1. Function saved image always in PCX format.
+     2. It's possible to save only in PCX and TGA format,
+        not BMP.
+   - Function Dossshell in commnd1.c
+     1. Function always called "command.com" as the dos-shell.
+        Now is calls wat the COMSPEC environment variable is.
+
+Jul 16 1997: Version 1.0 beta.
+
+   First version of ASM for DOS.
+   Used DJGPP (gcc 2.7.2) and Allegro graphical library (version 2.2).
+
+1993
+
+   Initial version on Acorn Archimedes RISC-OS.

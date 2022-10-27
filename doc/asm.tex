@@ -1,0 +1,1328 @@
+\documentclass{report}
+\usepackage{graphicx}
+\newcommand{\bs}{$\backslash$}
+
+                             % The preamble begins here.
+\title{Another Signal Manager}
+\author{Erwin Waterlander}
+\date{Oct 21 2022}          % Deleting this command produces today's date.
+
+\newcommand{\bc}{\scriptsize}
+\newcommand{\ec}{\normalsize}
+
+\begin{document}             % End of preamble and beginning of text.
+
+\maketitle                   % Produces the title.
+
+\tableofcontents
+
+\chapter{Introduction}\label{chap:intro}
+
+This document can be downloaded from this URL:\\
+\texttt{https://waterlan.home.xs4all.nl/asm.html}
+
+
+\section{What is ASM?}
+
+
+ASM is a program for digital signal processing for educational
+purposes.
+
+This is a port of the original version made in 1993 by Edwin Zoer and me on an
+Acorn Archimedes computer running RISC-OS.
+
+\section{History}
+
+\subsection{AIM : Another Image Manager}
+
+also known as:
+Atari Image Manager,
+Archimedes Image Manager,
+Amiga Image Manager. 
+
+\paragraph{}
+The image processing program AIM was originally developed for the 
+ATARI-ST  by Frans Groen and  Robert de Vries.  Since  the  first 
+version  of  AIM, the improvement of  this  public  domain  image 
+processing  package  has  become a joint effort of  a  number  of 
+people from the Delft University of Technology and the University 
+of  Amsterdam.
+AIM has been ported to the ARCHIMEDES (Arthur version) by  Robert
+Ellens, Damir Sudar and Alle-Jan van der Veen.
+Ed Doppenberg  was successful in the port to RISC-OS. 
+AIM has been written in the C-language. 
+AIM is limited in functionality as well as in flexibility.
+The main  purpose of the program is to experiment with digital
+image processing.
+
+The latest version 3.15 (1995) for Archimedes RISC-OS can be downloaded
+from http://wuerthner.dyndns.org/others.html
+
+On the Polytechnic of Enschede the Archimedes RISC-OS version of AIM was used
+in practical lessons in image processing.  Polytechnic of Enschede (Hogeschool
+Enschede), the Netherlands, is called Saxion hogescholen (www.saxion.nl)
+today.
+
+
+\subsection{ASM : Another Signal Manager}
+
+In 1993 the idea came to make a program like AIM, but then for signal
+processing: ASM for RISC-OS.  The task of our final examination for the
+Polytechnic of Enschede was to create ASM for RISC-OS.
+
+We made ASM at and with support of the Technical University of Delft, faculty
+Applied Physics, Pattern Recognition group (Tom Hoeksma), and with support from
+the Technisch Physische Dienst, Delft (Ed Doppenberg).  Our starting point was
+a stripped down version of AIM made by Ed Doppenberg.  It was only one window
+with a command line interpreter. 
+
+In 1993 Edwin and I had only basic knowledge of ANSI C and no knowledge about
+making user interfaces for RISC-OS. Our goal was to put as much as possible
+functionality in the program in only three months.
+
+With the first RISC-OS version we created it was possible to generate signals
+and do some basic processing on them. The program was made for use during
+practical lessons in digital signal processing at the polytechnic in Enschede.
+
+The original intention was that other students would develop ASM further. But
+it was Ed Doppenberg who did a thorough revision of the source code and added
+some professional functionality. That version of ASM (for RISC-OS) is not free
+available for the public domain.
+
+In 1997 I ported the first version of ASM for RISC-OS to DOS using DJGPP 2.01
+(gcc 2.7.2). See djgpp.txt. I used the Allegro 2.2 graphics library.
+Allegro is a library intended for use in computer games. It was initially
+conceived on the Atari ST. See allegro.txt.
+
+In 1997 my primary goal was to port the program to a working version on DOS, for
+the fun of programming and because I had no Archimedes computer.  That means I
+only changed the graphical interface. I tried to keep the source code as much
+as possible the same.  There are large changes in file plotutil.c. Files aim.c
+and command.c have been replaced by asm.c.
+
+Allegro development went on, supporting more platforms.  In 2007 I build ASM
+also for Windows and Linux.  I replaced some deprecated Allegro api calls with
+new ones, and build ASM for DOS, Windows and Linux. A few minor problems have
+been fixed. For the rest it's the same version as in 1997.
+
+For many years I had in the back of my mind the idea to make a windowed
+version, like the original version on RiscOS. In 2021 I started porting ASM to
+Java. In Oct 2022 the first alpha version was ready.
+
+
+\paragraph{}
+This version of ASM is Public Domain software.\\\\
+Erwin Waterlander\\
+e-mail: waterlan@xs4all.nl
+
+
+\chapter{User interface}
+
+\section{Graphical interface}
+
+The main window is a console in which the user can type the
+commands. Each signal is displayed in a separate window.
+
+\section{Command line interface}
+
+ASM has the same command line interface as AIM.
+
+\paragraph{}
+Commands can be abbreviated as long as they stay unique.
+
+\paragraph{}
+Parameters are separated by spaces.
+If you don't give all the parameters that are possible on
+a certain command ASM will take default values.
+
+
+\chapter{Functionality}
+
+\section{Data-format conversion} 
+
+All data is in 64 bit floating point (type double).
+
+\section{Domain conversion}
+
+Conversions can be done between the different domains:
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+From \bs To  &  Time & Frequency & Amplitude & Magnitude &   Phase \\
+\hline
+Time      &       &     X     &     X     &     X     &     X \\
+\hline
+Frequency &   X   &           &           &     X     &     X \\
+\hline
+Amplitude & & & & & \\
+\hline
+Magnitude & & & & & \\
+\hline
+Phase     & & & & & \\
+\hline
+\end{tabular}
+\label{tab:conversions}
+\caption{Domain conversions}
+\end{center}
+\end{table}
+
+\subsection{From time to frequency}
+
+\paragraph{fft}: Fast-Fourier- Transformation
+
+\bc
+\begin{verbatim}
+command: fft        input-signal, output-signal, length, window-type, average-type
+default  :              a       ,       b      ,   9   ,      1     ,      0
+range    :            <a-z>     ,     <a-z>    , <7-12>,    <0-6>   ,    <0-1>
+domain   : time
+\end{verbatim}
+\ec
+
+\begin{verbatim}
+Windows:
+0  block
+1  Hanning
+2  Hamming
+3  Gauss
+4  Blackman
+5  Kaiser
+6  triangle
+\end{verbatim}
+
+average-type, see section \ref{sec:freqtomag} and \ref{sec:freqtophas}.
+
+FFT is done per record. The default length is the record length of the input signal.
+
+\subsection{From frequency to time}
+
+\paragraph{ifft}: Inverse Fast-Fourier-Transformation
+
+\bc
+\begin{verbatim}
+command: ifft  input-signal, output-signal
+default  :          a      ,       b
+range    :        <a-z>    ,     <a-z>
+domain   : frequency
+\end{verbatim}
+\ec
+
+\subsection{From time to amplitude}
+
+\paragraph{histogram}
+
+\bc
+\begin{verbatim}
+command: histogram  input-signal, output-signal, buckets
+default  :               a      ,       b       ,    9
+range    :             <a-z>    ,     <a-z>     ,  <7-12>
+domain   : time
+\end{verbatim}
+\ec
+
+The number of buckets is given as a power of 2. So 9 means $2^9=512$ buckets.
+
+\subsection{From frequency to magnitude}\label{sec:freqtomag}
+
+There are two different ways of averaging:\\
+
+Average-type 0:
+
+\begin{enumerate}
+\item Calculate magnitude for every record:\\
+       \( |F(u)| = \sqrt{ Re^{2}(u) + Im^{2}(u) } , u = 0,1,...,N-1 \)
+\item sum all the results from the different records
+\item and calculate \( 10\cdot\log \).
+\end{enumerate}
+
+Average-type 1:
+
+\begin{enumerate}
+\item Sum all the different records,
+\item calculate the magnitude of the result\\
+   \( |F( u)| = \sqrt{ Re^{2}( u) + Im^{2}( u) } , u = 0,1,...,N-1 \)
+\item and calculate \( 10\cdot\log \).
+\end{enumerate}
+\paragraph{magnitude}: Calculate the signal's magnitude
+
+\bc
+\begin{verbatim}
+command: : magnitude  input-signal, output-signal, channel-no, average-type,  log
+default  :                 a      ,  input-signal,     0     ,      0      ,   0
+range    :               <a-z>    ,     <a-z>     ,  <0-max> ,    <0-1>    , <0-1>
+domain   : frequency
+
+log:
+0 = linear Y-axis
+1 = log Y- axis
+\end{verbatim}
+\ec
+
+\subsection{From frequency to phase}\label{sec:freqtophas}
+
+Average-type 0:
+
+\begin{enumerate}
+\item Calculate the phase of every record:\\
+  \( \Phi(u) = tan^{-1}\left[ \frac{Im(u)}{Re(u)}\right],  u = 0, 1, ..., N-1\)
+\item Sum the different records and divide by the number of records.
+\end{enumerate}
+
+Average-type 1:
+
+\begin{enumerate}
+\item Sum the different records and divide by the number of records.
+\item Calculate the phase of the result:\\
+   \( \Phi(u) = tan^{-1}\left[ \frac{Im(u)}{Re(u)}\right],  u = 0, 1, ..., N-1 \)
+\end{enumerate}
+\ec
+\paragraph{phase}: Calculate the signal's phase
+
+\bc
+\begin{verbatim}
+command: : phase      input-signal, output-signal, channel-no, average-type
+default  :                 a      ,  input-signal,     0     ,      0
+range    :               <a-z>    ,     <a-z>     ,  <0-max> ,    <0-1>
+domain   : frequency
+\end{verbatim}
+\ec
+
+\subsection{From time to magnitude}
+
+Not implemented.
+
+\subsection{From time to phase}
+
+Not implemented.
+
+\section{Mathematical functions}
+
+There are a few simple mathematical functions in ASM. The functions
+can be performed on signals in any domain. For functions that work
+on more than one input-signal the record-length and the number of
+channels have to be the same for all the input signals. All
+constant values are values between $<min> ~ = INT\_MIN = -2147483647 $
+and $ <max> ~ = INT\_MAX = 2147483647 $.
+
+\paragraph{clear}: Make all elements 0
+
+\[ Re(out) = 0 \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : clear      Input-signal
+default  :                 a      
+range    :               <a-z>    
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{assign}: Assign a constant value to all elements
+
+\[ Re(out) = C \]
+\[ Im(out) = C \]
+
+\bc
+\begin{verbatim}
+command: : assign     Input-signal,   real-part,   imag-part
+default  :                 a      ,       1    ,       1
+range    :               <a-z>    ,   <min-max>,   <min-max>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+
+\paragraph{inv}: Invert all elements
+
+\[ Re(out) = -1*Re(in) \]
+\[ Im(out) = -1*Im(in) \]
+
+\bc
+\begin{verbatim}
+command: : inv        Input-signal,  Output-signal
+default  :                 a      ,   input-signal  
+range    :               <a-z>    ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{conjugate}: 
+
+\[ Re(out) = Re(in) \]
+\[ Im(out) = -1*Im(in) \]
+
+\bc
+\begin{verbatim}
+command: : conjugate  Input-signal,  Output-signal
+default  :                 a      ,   input-signal  
+range    :               <a-z>    ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{cabs}: Calculate absolute value of each element
+
+\[ Re(output) = \sqrt{Re^{2}(input) + Im^{2}(input)} \]
+\[ Im(output) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : cabs       Input-signal,  Output-signal
+default  :                 a      ,   input-signal  
+range    :               <a-z>    ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{cadd}: Add a constant value
+
+\[ Re(out) = Re(in) + C \]
+\[ Im(out) = Im(in) \]
+
+\bc
+\begin{verbatim}
+command: : cadd       Input-signal,  constant,  Output-signal
+default  :                 a      ,      0   ,   input-signal  
+range    :               <a-z>    , <min-max>,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+
+\paragraph{cmultiply}: Multiply by a constant value
+
+\[ Re(out) = C*Re(in) \]
+\[ Im(out) = C*Im(in) \]
+
+\bc
+\begin{verbatim}
+command: : cmultiply  Input-signal,  constant,  Output-signal
+default  :                 a      ,      1   ,   input-signal  
+range    :               <a-z>    , <min-max>,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{cdivide}: Divide by a constant
+
+\[ Re(out) = \frac{Re(in)}{C} \]
+\[ Im(out) = \frac{Im(in)}{C} \]
+
+\bc
+\begin{verbatim}
+command: : cdivide    Input-signal,  constant,  Output-signal
+default  :                 a      ,      1   ,   input-signal  
+range    :               <a-z>    ,  <1-max> ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+
+\paragraph{abs}: Absolute difference between two signals
+
+\[ Re(out) = \sqrt{ (Re(in1) - Re(in2))^{2} + (Im(in1) - Im(in2))^{2} } \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : abs        Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,   input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{add}: Add two signals
+
+\[ Re(out) = Re(in1) + Re(in2) \]
+\[ Im(out) = Im(in1) + Im(in2) \]
+
+\bc
+\begin{verbatim}
+command: : add        Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,   input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{substract}: Substract two signals
+
+\[ Re(out) = Re(in1) - Re(in2) \]
+\[ Im(out) = Im(in1) - Im(in2) \]
+
+\bc
+\begin{verbatim}
+command: : substract  Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,   input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{multiply}: Multiply two signals
+
+\[ Re(out) = \frac{ Re(in1) * Re(in2) - Im(in1) * Im(in2) }{C} \]
+\[ Im(out) = \frac{ Re(in1) * Im(in2) + Im(in1) * Re(in2) }{C} \]
+
+\bc
+\begin{verbatim}
+command: : multiply   Input-signal1, Input-signal2,  constant, Output-signal
+default  :                 a       ,      b       ,      1   ,  input-signal2
+range    :               <a-z>     ,    <a-z>     ,   <1-max>,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{divide}: Divide two signals
+
+\[ Re(out) = \frac{\sqrt{ Re^{2}(in1) + Im^{2}(in1)} }{ 1 + \sqrt{Re^{2}(in2) + Im^{2}(in2)}} \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : divide     Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,   input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{sine}: Calculate sine
+
+\[ Re(out) = \sin (Re(in)) \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : sine       Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{cosine}: Calculate sine
+
+\[ Re(out) = \cos (Re(in)) \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : cosine     Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{ln}: logarithm
+
+\[ Re(out) = \ln{Re(in)} \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : ln         Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{log}: $ ^{10}\log $
+
+\[ Re(out) = \log{Re(in)} \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : log        Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{epow}: 
+
+\[ Re(out) = e^{Re(in)} \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : epow       Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{tenpow}: 
+
+\[ Re(out) = 10^{Re(in)} \]
+\[ Im(out) = 0 \]
+
+\bc
+\begin{verbatim}
+command: : tenpow     Input-signal,  Output-signal
+default  :                 a      ,  input-signal 
+range    :               <a-z>    ,     <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+
+\paragraph{minimum}: minimum of two signals
+
+\[ Re(out) = \sqrt{Re^{2}(in1) + Im^{2}(in1)} < \sqrt{Re^{2}(in2) + Im^{2}(in2)} ? Re(in1) : Re(in2) \]
+\[ Im(out) = \sqrt{Re^{2}(in1) + Im^{2}(in1)} < \sqrt{Re^{2}(in2) + Im^{2}(in2)} ? Im(in1) : Im(in2) \]
+
+\bc
+\begin{verbatim}
+command: : minimum    Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,  input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{maximum}: maximum of two signals
+
+\[ Re(out) = \sqrt{Re^{2}(in1) + Im^{2}(in1)} > \sqrt{Re^{2}(in2) + Im^{2}(in2)} ? Re(in1) : Re(in2) \]
+\[ Im(out) = \sqrt{Re^{2}(in1) + Im^{2}(in1)} > \sqrt{Re^{2}(in2) + Im^{2}(in2)} ? Im(in1) : Im(in2) \]
+
+\bc
+\begin{verbatim}
+command: : maximum    Input-signal1, Input-signal2,  Output-signal
+default  :                 a       ,      b       ,  input-signal2
+range    :               <a-z>     ,    <a-z>     ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\section{Cross-correlation}
+
+The cross-correlation of two signals of N samples is calculated as follows:
+
+\begin{enumerate}
+  \item Zeropad the signals per record, to prevent wrap-around pollution.
+  \item Multiply the signals with an N points window.
+  \item Calculate the 2N points FFT of the signals.
+  \item Multiply the complex conjugate of the first with the second signal.
+  \item Calculate the 2N points IFFT.
+\end{enumerate}
+
+\paragraph{correlation}: calculate cross-correlation of two signals
+
+\bc
+\begin{verbatim}
+command: : correlation  Input-signal1, Input-signal2, Output-signal, window-type
+default  :                   a       ,      b       , input-signal2,      0
+range    :                 <a-z>     ,    <a-z>     ,    <a-z>     ,    <0-6>
+domain   : time
+\end{verbatim}
+\ec
+
+\begin{verbatim}
+Windows:
+0  block
+1  Hanning
+2  Hamming
+3  Gauss
+4  Blackman
+5  Kaiser
+6  triangle
+\end{verbatim}
+
+\section{Convolution}
+
+The convolution of two signals of N samples is calculated as follows:
+
+\begin{enumerate}
+  \item Zeropad the signals per record, to prevent wrap-around pollution.
+  \item Multiply the signals with an N points window.
+  \item Calculate the 2N points FFT of the signals.
+  \item Multiply the first with the second signal.
+  \item Calculate the 2N points IFFT.
+\end{enumerate}
+
+
+\paragraph{convolution}: calculate convolution of two signals
+
+\bc
+\begin{verbatim}
+command: : convolution  Input-signal1, Input-signal2, Output-signal, window-type
+default  :                   a       ,      b       , input-signal2,      0
+range    :                 <a-z>     ,    <a-z>     ,    <a-z>     ,    <0-6>
+domain   : time
+\end{verbatim}
+\ec
+
+\section{Functions}
+
+ASM can generate some standard signals.
+Currently the functions are limited to 1 record and 1 channel.
+
+\begin{itemize}
+\item ts = sample time
+\item A = Amplitude
+\item Amax = 2147483647
+\item B = offset
+\item Bmin = -2147483647
+\item Bmax = 2147483647
+\item T = period time
+\item f = frequency
+\item fmax = 2147483647
+\item data-type: 0=real, 1=imaginary, 2=complex
+\item N = number of elements = $2^{n}$
+Nmin = 128 (n=7), Nmax = 4096
+\item Smax = 65535, maximal sample-rate (in 10 Hz)
+\end{itemize}
+
+Sample-rate is always given in 10 (Hz).
+
+\paragraph{fdelta}:
+
+\[ x(n \cdot t_{s}) = A,~ n \cdot t_{s} = t_{d},~ n=0,1,...,N-1 \]
+\[ x(n \cdot t_{s}) = 0,~ n \cdot t_{s} \neq t_{d},~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fdelta  signal,     A    ,    td (ms) , data-type,    n   , sample-rate
+default  :           a   ,    255   ,     0      ,     0    ,    9   ,   1024
+range    :         <a-z> , <0-Amax> , <0-t(N-1)> ,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fconstant}:
+
+\[ x(n \cdot t_{s}) = A,~ n=0,1,...,N-1 \]
+\bc
+\begin{verbatim}
+command: : fconstant  signal,     A    , data-type,    n   , sample-rate
+default  :              a   ,    255   ,     0    ,    9   ,   1024
+range    :            <a-z> , <0-Amax> ,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fstep}:
+
+\[ x(n \cdot t_{s}) = B,~ n \cdot t_{s} < t_{step},~ n=0,1,...,N-1 \]
+\[ x(n \cdot t_{s}) = A+B,~ n \cdot t_{s} \geq t_{step},~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fstep  signal,      B     ,     A    , tdelay(ms) , data-type,    n   , sample-rate
+default  :          a   ,      0     ,    255   ,     0      ,     0    ,    9   ,   1024
+range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <0-t(N-1)> ,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fsquare}:
+
+\[ x(n \cdot t_{s}) = A+B,~ 0 \leq n \cdot t_{s} < dc \cdot T,~ n=0,1,...,N-1 \]
+\[ x(n \cdot t_{s}) = -A+B,~ dc \cdot T \leq n \cdot t_{s} < T,~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fsquare  signal,      B     ,     A    ,     f    ,   dc   , data-type,    n   , sample-rate
+default  :            a   ,      0     ,    255   ,    100   ,   50   ,     0    ,    9   ,   1024
+range    :          <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-100>,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+dc = duty cycle
+
+\paragraph{framp}:
+
+\[ x(n \cdot t_{s}) = \frac{A}{t_{s} \cdot (N-1)} \cdot n \cdot t_{s} + B,~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : framp  signal,      B     ,     A    ,data-type,    n   , sample-rate
+default  :          a   ,      0     ,    255   ,   0     ,    9   ,   1024
+range    :        <a-z> , <Bmin-Bmax>, <0-Amax> ,  <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{ftriangle}:
+
+\[ x(n \cdot t_{s}) = \frac{4A}{T}\cdot(n \cdot t_{s} + \frac{\phi_{0} \cdot T}{2\pi})-A+B,~ 0 \leq n \cdot t_{s} < \frac{1}{2}T,~ n=0,1,...,N-1 \]
+\[ x(n \cdot t_{s}) = \frac{-4A}{T}\cdot(n \cdot t_{s} + \frac{\phi_{0} \cdot T}{2\pi})+3A+B,~ \frac{1}{2}T \leq n \cdot t_{s} < T,~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : ftriangle  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
+default  :              a   ,      0     ,    255   ,    100   ,    0   ,       0  ,    9   ,   1024
+range    :            <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fsine}:
+
+\[ x(n \cdot t_{s}) = A \sin(2\pi fnt_{s} + \phi_{0}) + B,~ n=0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fsine  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
+default  :          a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   1024
+range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fsinc}:
+
+\[ x(n \cdot t_{s}) = A \left( \frac{\sin (2\pi fnt_{s})}{2\pi fnt_{s}} \right) + B,~ n=1,...,N-1 \]
+\[ x(n \cdot t_{s}) = A \cos (2\pi fnt_{s})+B,~ n=0 \]
+
+\bc
+\begin{verbatim}
+command: : fsinc  signal,      B     ,     A    ,     f    , data-type,    n   , sample-rate
+default  :          a   ,      0     ,    255   ,    100   ,   0      ,    9   ,   1024
+range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> ,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fcosine}:
+
+\[ x(n \cdot t_{s}) = A \cos (2\pi fnt_{s} + \phi_{0})+B,~ n=0,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fcosine  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
+default  :            a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   1024
+range    :          <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fexp}:
+
+\[  x(n \cdot t_{s}) = A ( 1 - e^{\frac{-n\cdot t_{s}}{t_{63.2\%}}}),~ n=0,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : fexp     signal,     A    , t63.2(ms), data-type,    n   , sample-rate
+default  :            a   ,    255   ,    0.10  ,     0    ,    9   ,       1024
+range    :          <a-z> , <0-Amax> ,<1e-6-1e6>,   <0-2>  ,  <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{fnoise}: pseudo random noise.
+
+\bc
+\begin{verbatim}
+command: : fnoise  signal,     A    , data-type,  seed  ,   n   , sample-rate
+default  :           a   ,    255   ,     0    ,    1   ,   9   ,    1024
+range    :         <a-z> , <0-Amax> ,   <0-2>  , <0-512>, <7-12>,  <1-Smax>
+domain   : time
+\end{verbatim}
+\ec
+
+\section{Conditioning}
+
+Zero padding is extending each record of N samples with N zeros.
+The output signal has a record length of 2N.
+
+\paragraph{zeropadding}:
+
+\bc
+\begin{verbatim}
+command: : zeropad  input-signal, output-signal
+default  :               a      ,  input-signal
+range    :             <a-z>    ,     <a-z>
+domain   : time
+\end{verbatim}
+\ec
+
+\section{Windowing}
+
+\paragraph{wblock}: block window
+
+\[ W(n) = 1,~ n = 0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : wblock   signal,    n    , samplerate
+default  :            a   ,    9    ,    1024
+range    :          <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{whanning}: Hanning window
+
+\[ W(n) = \frac{1}{2}\left( 1- \cos (\frac{2\pi n}{N-1}) \right) ,~ n = 0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : whanning   signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{whamming}: Hamming window
+
+\[W(n) =  0.538 - 0.462 \cos (\frac{2\pi n}{N-1}) ,~ n = 0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : whamming   signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{wgauss}: Gauss window
+\large
+\[W(n) = e^{- \frac{1}{2} \left( \frac{\alpha \cdot (n - \frac{N-1}{2}) \cdot 2 }{\frac{N-1}{2}} \right)^{2}},~ n = 0,1,...,N-1 \]
+\normalsize
+\[ \alpha = 3.0 \]
+
+\bc
+\begin{verbatim}
+command: : wgauss     signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{wblackman}: Blackman window
+
+\[ W(n) = 0.42 - 0.5\cos (\frac{2\pi n}{N-1}) + 0.08\cos (\frac{4\pi n}{N-1}),~ n = 0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : wblackman  signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{wkaiser}: Kaiser window
+
+\[ W(n) = \frac{1}{2.48} \left( 1- 1.24\cos (\frac{2\pi n}{N-1}) + 0.244\cos (\frac{4\pi n}{N-1}) - 0.00305\cos (\frac{6\pi n}{N-1}) \right),\]
+\[ n = 0,1,...,N-1  \]
+
+
+\bc
+\begin{verbatim}
+command: : wkaiser    signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\paragraph{wtriangle}:
+
+\[ W(n) = 1 - \left|  \frac{n-\frac{N-1}{2}}{\frac{N-1}{2}} \right| ,~ n = 0,1,...,N-1 \]
+
+\bc
+\begin{verbatim}
+command: : wtriangle  signal,    n    , samplerate
+default  :              a   ,    9    ,    1024
+range    :            <a-z> ,  <7-12> ,  (1-Smax)
+domain   : time
+\end{verbatim}
+\ec
+
+\section{Presentation functions}
+
+\subsection{Time domain}\label{sec:timedom}
+
+\paragraph{real}: Show the real part of the signal.
+
+\bc
+\begin{verbatim}
+command: : real    signal, channel-no ,  record-no
+default  :           a   ,      0     ,      0
+range    :         <a-z> ,  <0-max>   ,   <0-max>
+domain   : time, frequency
+\end{verbatim}
+\ec
+
+
+\paragraph{imaginary}: Show the imaginary part of the signal.
+
+\bc
+\begin{verbatim}
+command: : imaginary  signal, channel-no ,  record-no
+default  :              a   ,      0     ,      0
+range    :             <a-z> ,  <0-max>   ,   <0-max>
+domain   : time, frequency
+\end{verbatim}
+\ec
+
+\subsection{Frequency domain}
+
+\paragraph{real}: See section \ref{sec:timedom}
+
+\paragraph{imaginary}: See section \ref{sec:timedom}
+
+\paragraph{bode}: Show bode diagram
+
+\bc
+\begin{verbatim}
+command: : bode       signal, channel-no ,  record-no
+default  :              a   ,      0     ,      0
+range    :            <a-z> ,  <0-max>   ,   <0-max>
+domain   : frequency
+\end{verbatim}
+\ec
+
+\subsection{Magnitude and phase domain}
+
+\subsection{Generic functions}
+
+\paragraph{doff}: display off, do not display signals
+
+\bc
+\begin{verbatim}
+command: : doff
+\end{verbatim}
+\ec
+
+\paragraph{don}: display on, display signals
+
+\bc
+\begin{verbatim}
+command: : don
+\end{verbatim}
+\ec
+
+\paragraph{boff}: bar display off, display signals as normal graphs.
+
+\bc
+\begin{verbatim}
+command: : boff
+\end{verbatim}
+\ec
+
+\paragraph{bon}: bar display on, display signals as bargraphs.
+
+\bc
+\begin{verbatim}
+command: : bon
+\end{verbatim}
+\ec
+
+\paragraph{display}: display a signal, regardless of \textbf{doff/don}.
+
+\bc
+\begin{verbatim}
+command: : display    signal, channel-no ,  record-no
+default  :              a   ,      0     ,      0
+range    :            <a-z> ,  <0-max>   ,   <0-max>
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{xscale}: set horizontal scale factor.
+
+\bc
+\begin{verbatim}
+command: : xscale     signal, scale-factor
+default  :              a   ,      1
+range    :            <a-z> ,    <0-10>
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{print}: print values of signal in commandline window.
+
+\bc
+\begin{verbatim}
+command: : print      signal, channel-no ,  record-no
+default  :              a   ,      0     ,      0
+range    :            <a-z> ,  <0-max>   ,   <0-max>
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{info}: print header information.
+
+\bc
+\begin{verbatim}
+command: : info      signal
+default  :              a   
+range    :            <a-z> 
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{list}: list all signals.
+
+\bc
+\begin{verbatim}
+command: :  list
+\end{verbatim}
+\ec
+
+\section{Other functions}
+
+\paragraph{writf}: write file.
+
+\bc
+\begin{verbatim}
+command: : writef    signal,  filename  , usertext, description, bits-per-sample
+default  :              a  , signalname ,         ,            , bits-per-sample
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{readf}: read file.
+
+\bc
+\begin{verbatim}
+command: : readf   filename  , signalname
+default  :             a     ,  filename
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+
+\paragraph{shift}: shift a signal.
+
+\bc
+\begin{verbatim}
+command: : shift     signal ,     shift      , output-signal
+default  :              a   ,       0        ,  input-signal
+range    :            <a-z> ,<-length-length>,     <a-z>
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+Shifting is done per channel.
+Maximum shift is one record length.
+
+\paragraph{rotate}: rotate a signal.
+
+\bc
+\begin{verbatim}
+command: : rotate    signal ,    rotate      , output-signal
+default  :              a   ,       0        ,  input-signal
+range    :            <a-z> ,<-length-length>,     <a-z>
+domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+Rotation is done per channel.
+Maximum rotation is one record length.
+
+\paragraph{clip}: clip a signal.
+
+\bc
+\begin{verbatim}
+command: : clip      signal ,     left       ,   right   , output-signal
+default  :              a   ,       0        ,  length   ,  input-signal
+range    :            <a-z> ,   <0-length>   , <0-length>,     <a-z>
+domain   : time
+\end{verbatim}
+\ec
+
+\bc
+\begin{verbatim}
+command: : clip      signal ,     left       ,   right   , attenuation ,output-signal
+default  :              a   ,       0        ,  length   ,    50 (dB)  , input-signal
+range    :            <a-z> ,   <0-1/2Fs>    , <0-1/2Fs> ,    <0-100>  ,    <a-z>
+domain   : frequency
+\end{verbatim}
+\ec
+
+Clipping is done per record.
+
+\section{New functions}
+
+The functions listed in this section are new. They did not exist in
+the original RiscOS version of ASM.
+
+\paragraph{dosshell}: Start a system shell. Signals stay in memory.
+
+\paragraph{}
+This commands starts a system shell. The user can run some text commands in the
+shell.  When the user exits the shell, he/she comes back in ASM. This command
+has only use in the DOS operating system. In multi-tasking operating systems
+like Windows and Linux the shell immediately ends and the user goes direct
+back to ASM.
+
+\bc
+\begin{verbatim}
+command:  dosshell
+\end{verbatim}
+\ec
+
+\paragraph{bitmap}: Save the signal image in a bitmap file.
+
+\bc
+\begin{verbatim}
+command:  bitmap    signal ,   filename ,  <format>
+default:              a    ,      a     ,     1
+range:              <a-z>  ,            ,   <1-3>
+\end{verbatim}
+\ec
+
+
+format\\
+1 = pcx (Zsoft Paintbrush)\\
+2 = tga (Truevision Targa)\\
+3 = bmp (Windows Bitmap)
+
+\paragraph{signaldir}: Set the directory path where to store and read signals.
+
+\bc
+\begin{verbatim}
+command: signaldir  directory-path
+\end{verbatim}
+\ec
+
+\paragraph{samplerate}: Set the default samplerate.
+
+\bc
+\begin{verbatim}
+command: samplerate      samplerate 
+default:            the current samplerate
+\end{verbatim}
+\ec
+
+\paragraph{readwav}: Read a wav file.
+
+\bc
+\begin{verbatim}
+command:  readwav   filename     signalname 
+default:               a              a
+\end{verbatim}
+\ec
+
+Read a signal from a RIFF WAV file. Only 8 bit mono
+WAV files are supported.
+Note that reading large WAV files will cause memory problems.
+The data of 8 bit mono WAV files is of type 'unsigned char'.
+
+\paragraph{}
+The function does not check if the number of samples is
+a power of 2, nor does it chop the number of samples to a power of 2.
+Data is also not split in records. See \ref{sec:header}.
+This function needs to be improved.
+
+\paragraph{macro}: Run a macro.
+
+\bc
+\begin{verbatim}
+command: macro  macro-filename
+\end{verbatim}
+\ec
+
+\chapter{Data format}
+
+\section{Header}\label{sec:header}
+
+All signals have information in the form of a header. To show header
+information use the \textbf{info} command. The ASM header is a
+TCL-Image header with some additions. The ASM header is defined as follows:
+
+\paragraph{}
+In this case a word is two bytes (16 bits). The header has a
+fixed size of 512 bytes.
+
+\begin{description}
+\item[Word(s)] Contents
+\item[1] Unused and always 0 in ASM.
+         \begin{description}
+             \item[\sf 0] = if file contains 16 bits pixels, `unpacked'.
+             \item[\sf 1] = if file contains 8 bits pixels, `packed'.
+	     \end{description}
+\item[2] Number of samples of the record. min $2^{7}=128$. max $2^{12}=4096$.
+\item[3] Number of channels. min 1. max 65535.
+\item[4] File sequence number on tape, starting with 1. On disk this is
+             always 0.
+\item[5] Number of bits per sample.
+         \begin{description}
+             \item[\sf 8]    = 8-bits amplitude (byte)
+			 \item[\sf 16]   = 16-bits amplitude (short)
+			 \item[\sf 32]   = 32-bits amplitude (integer)
+			 \item[\sf 3232] = 32-bits amplitude (float)
+			 \item[\sf 6464] = 64-bits amplitude (double)
+	     \end{description}
+\item[6] Number of records per channel. min 1. max 65535.
+\item[7] Domain ID
+         \begin{description}
+             \item[\sf 0]   = Time
+			 \item[\sf 1]   = Frequency
+			 \item[\sf 2]   = Amplitude
+			 \item[\sf 3]   = Magnitude
+			 \item[\sf 4]   = Phase
+	     \end{description}
+\item[8] Data Type ID
+         \begin{description}
+             \item[\sf 0]   = Real
+			 \item[\sf 1]   = Imaginary
+			 \item[\sf 2]   = Complex
+	     \end{description}
+\item[9-10] Pointer to real part
+\item[11-12] Pointer to imaginary part
+\item[13] Samplerate in $10^{1} (Hz)$. max 65535.
+\item[14-32] Reserved
+\item[33-128] Numeric data (type double)
+\item[129-165] ASM ID string (ASCII text)
+\item[166-181] Signalname (ASCII text)
+\item[182-204] User text (ASCII text)
+\item[205-219] Date (ASCII text)
+\item[220-256] Description (ASCII text)
+\end{description}
+
+\section{Data}
+
+\paragraph{channels}
+A signal can exist out of one or more channels. Channels
+are in time parallel recordings of sound. This could be
+done with multiple microphones. Every microphone records
+a channel. A channel exists out of one or more records.
+All channels have the same number of records. The maximum
+number of records is 65535.
+
+\paragraph{records}
+A channel is divided in records of equal size. The size is always
+a power of 2. The minimal size is $2^{7}=128$, and the
+maximal size is $2^{12}=4096$ samples. This is done to
+keep the size of the data manageable. Fourier transformation is
+done per record. Also displaying the signal is done per record.
+
+\paragraph{samples}
+Samples can be real, imaginary or complex. In memory samples
+are always of type double (64 bit floating point). Samples
+can be converted to lower resolutions when writing them to disk.
+While reading data from disk ASM will convert the samples to
+type double.
+
+\paragraph{}
+The functions in ASM generate signals that exist out of one channel
+with one record.
+
+\begin{figure}[h]
+\centerline{\includegraphics{asmdata}}
+\caption{ASM file}
+\label{fig:asmfile}
+\end{figure}
+
+
+
+\end{document}               % End of document.
