@@ -1,7 +1,5 @@
 package signals;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -10,9 +8,12 @@ import dialogs.SaveSignalDialog;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -32,7 +33,10 @@ public class SignalWindow {
     public static final int PHASE_MIN = -200;
 
     private final Signal signal;
-    private final MenuBar menuBar;
+    private final MenuBar menuBar = new MenuBar();
+    private final ToolBar toolBar = new ToolBar();
+    private final ComboBox<String> viewMode = new ComboBox<String>();
+    private boolean viewModeReact = true;
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final Stage stage = new Stage();
@@ -41,16 +45,15 @@ public class SignalWindow {
     public SignalWindow(Signal s, CommandLineParser parser, Map<String, Signal> signals) {
         this.signal = s;
         this.signal.setWindow(this);
-        
-        menuBar = new MenuBar();
+
         Menu menuFile = new Menu("File");
         MenuItem menuItemSave = new MenuItem("Save");
         menuFile.getItems().add(menuItemSave);
-        
+
         Menu menuView = new Menu("View");
         MenuItem menuItemConsole = new MenuItem("Console");
         menuView.getItems().add(menuItemConsole);
-        
+
         menuItemSave.setOnAction(e -> {
             new SaveSignalDialog(parser, signals, s.getName());
         });
@@ -59,7 +62,42 @@ public class SignalWindow {
         });
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuView);
-        
+
+        Button zoomInButton = new Button("+");
+        Button zoomOutButton = new Button("-");
+
+        zoomInButton.setOnAction(event -> {
+            s.setHScale(s.getHScale() / 0.8);
+            this.show(bon);
+        });
+        zoomOutButton.setOnAction(event -> {
+            s.setHScale(s.getHScale() * 0.8);
+            this.show(bon);
+        });
+
+        // Add buttons to the ToolBar
+        toolBar.getItems().add(zoomInButton);
+        toolBar.getItems().add(zoomOutButton);
+        if (signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ) {
+            toolBar.getItems().add(viewMode);
+        }
+        viewMode.setOnAction(e -> {
+            if (viewModeReact) {
+                if (viewMode.getValue().equals("real")) {
+                    signal.setMode(Signal.REAL_M);
+                    this.show(bon);
+                }
+                if (viewMode.getValue().equals("imag")) {
+                    signal.setMode(Signal.IMAG_M);
+                    this.show(bon);
+                }
+                if (viewMode.getValue().equals("bode")) {
+                    signal.setMode(Signal.BODE_M);
+                    this.show(bon);
+                }
+            }
+        });
+
         canvas = new Canvas(signal.getWindowWidth(), signal.getWindowHeight());
         gc = canvas.getGraphicsContext2D();
         this.show(bon);
@@ -67,19 +105,35 @@ public class SignalWindow {
 
     public void show(boolean bon) {
         this.bon = bon;
+
+        viewModeReact = false;
+        viewMode.getItems().clear();
+        if (signal.getDataType() == Signal.REAL || signal.getDataType() == Signal.COMP) {
+            viewMode.getItems().add("real");
+        }
+        if (signal.getDataType() == Signal.IMAG || signal.getDataType() == Signal.COMP) {
+            viewMode.getItems().add("imag");
+        }
+        if (signal.getDataDomain() == Signal.FREQ) {
+            viewMode.getItems().add("bode");
+        }
+
         String mode;
         switch (signal.getMode()) {
         case Signal.REAL_M:
             mode = "  Real";
+            viewMode.getSelectionModel().select("real");
             break;
         case Signal.IMAG_M:
             mode = "  Imaginary";
+            viewMode.getSelectionModel().select("imag");
             break;
         case Signal.MAGN_M:
             mode = "  Magnitude";
             break;
         case Signal.BODE_M:
             mode = "  Bode";
+            viewMode.getSelectionModel().select("bode");
             break;
         case Signal.PHAS_M:
             mode = "  Phase";
@@ -99,6 +153,7 @@ public class SignalWindow {
             break;
         }
 
+        viewModeReact = true;
         VBox root = new VBox();
 
         signal.setWindowWidth((int) (signal.getHScale() * signal.getDataLength() + LEFT_XOFFS + RIGHT_XOFFS));
@@ -110,10 +165,12 @@ public class SignalWindow {
         }
         // TODO : get actual height of menu bar.
         // menuBar.getheight() returns 0.0. Now adding 50.
-        Scene scene = new Scene(root, signal.getWindowWidth(), signal.getWindowHeight() + 50);
+        Scene scene = new Scene(root, signal.getWindowWidth(),
+                signal.getWindowHeight() + 50 + 50 /* toolBar.getHeight() */ );
         canvas.setWidth(signal.getWindowWidth());
         canvas.setHeight(signal.getWindowHeight());
         root.getChildren().add(menuBar);
+        root.getChildren().add(toolBar);
         root.getChildren().add(canvas);
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -151,29 +208,29 @@ public class SignalWindow {
         stage.setTitle("Signal " + this.signal.getName() + " " + mode);
         stage.show();
     }
-    
+
     public void close() {
         stage.close();
     }
-    
+
     private double getRecordMax(Signal s) {
-        int offset = (s.getChannel()*s.getDataRecords() +s.getRecord())*s.getDataLength();
+        int offset = (s.getChannel() * s.getDataRecords() + s.getRecord()) * s.getDataLength();
         double[] data = (s.getMode() == Signal.IMAG_M) ? s.getImagData() : s.getRealData();
         double max = data[offset];
         for (int i = 1; i < s.getDataLength(); i++) {
-            if (data[offset+i] > max)
-                max = data[offset+i];
+            if (data[offset + i] > max)
+                max = data[offset + i];
         }
         return max;
     }
 
     private double getRecordMin(Signal s) {
-        int offset = (s.getChannel()*s.getDataRecords() +s.getRecord())*s.getDataLength();
+        int offset = (s.getChannel() * s.getDataRecords() + s.getRecord()) * s.getDataLength();
         double[] data = (s.getMode() == Signal.IMAG_M) ? s.getImagData() : s.getRealData();
         double min = data[offset];
         for (int i = 1; i < s.getDataLength(); i++) {
-            if (data[offset+i] < min)
-                min = data[offset+i];
+            if (data[offset + i] < min)
+                min = data[offset + i];
         }
         return min;
     }
@@ -602,7 +659,7 @@ public class SignalWindow {
             if (temp[i] < Minimum)
                 Minimum = temp[i];
         }
-        // Cut very low values at -100 dB. 
+        // Cut very low values at -100 dB.
         if (Minimum < -100.0) {
             Minimum = -100.0;
         }
@@ -616,9 +673,10 @@ public class SignalWindow {
         delta_db = 10;
 
         s.setVScale(Max_abs / (magHeight));
-        //System.out.println(String.format("max %f min %f, vscale %f", s.getMaximum(), s.getMinimum(),s.getVScale()));
-        //System.out.println(String.format("Max_abs %f", Max_abs));
-        
+        // System.out.println(String.format("max %f min %f, vscale %f", s.getMaximum(),
+        // s.getMinimum(),s.getVScale()));
+        // System.out.println(String.format("Max_abs %f", Max_abs));
+
         gc.setStroke(Color.GRAY);
         for (int i = 0; i < nrOfText; i++) {
             int yValue = (int) (s.getMaximum() - delta_db * i);
@@ -675,10 +733,10 @@ public class SignalWindow {
 
             for (int i = 0; i < s.getDataLength(); i++) {
                 cum1[i] = 10.0 * Math.log10(cum1[i] / s.getDataRecords());
-               // Cut very low values at -100 dB.
-               if (cum1[i] < -100.0)
+                // Cut very low values at -100 dB.
+                if (cum1[i] < -100.0)
                     cum1[i] = -100.0;
-                cum1[i] = cum1[i]/ s.getVScale();
+                cum1[i] = cum1[i] / s.getVScale();
             }
         }
 
@@ -697,7 +755,7 @@ public class SignalWindow {
                 // Cut very low values at -100 dB.
                 if (cum1[i] < -100.0)
                     cum1[i] = -100.0;
-                cum1[i] = cum1[i]/ s.getVScale();
+                cum1[i] = cum1[i] / s.getVScale();
             }
 
         }
@@ -728,7 +786,8 @@ public class SignalWindow {
         Max_abs = (int) (s.getMaximum() - s.getMinimum()); /* verschil tussen minimum en maximum */
         s.setVScale(Max_abs / (double) (phase_hoogte));
 
-        //System.out.println(String.format("Max: %d , Vscale: %f , ph_h %d \n", Max_abs, s.getVScale(), phase_hoogte));
+        // System.out.println(String.format("Max: %d , Vscale: %f , ph_h %d \n",
+        // Max_abs, s.getVScale(), phase_hoogte));
 
         for (int i = 0; i < s.getDataLength(); i++)
             cum1[i] = 0;
@@ -863,7 +922,7 @@ public class SignalWindow {
                 Minimum = temp[i];
         }
         if (s.getLog() == 1) {
-            // Cut very low values at -100 dB. 
+            // Cut very low values at -100 dB.
             if (Minimum < -100.0) {
                 Minimum = -100.0;
             }
@@ -931,7 +990,7 @@ public class SignalWindow {
                 // Cut very low values at -100 dB.
                 if (temp[i] < -100.0)
                     temp[i] = -100.0;
-                temp[i] = temp[i]/ s.getVScale();
+                temp[i] = temp[i] / s.getVScale();
             }
         } else {
             for (int i = 0; i < s.getDataLength(); i++)
@@ -1071,11 +1130,10 @@ public class SignalWindow {
             }
         }
     }
-    
-    private void gen_hist_background(Signal s, GraphicsContext gc)
-    {
-        int lengte,hoogte,aantaltxt;
-        double delta_a,delta_n,Max_abs;
+
+    private void gen_hist_background(Signal s, GraphicsContext gc) {
+        int lengte, hoogte, aantaltxt;
+        double delta_a, delta_n, Max_abs;
         double xwaarde, afstand;
         int maxy = s.getWindowHeight();
 
@@ -1093,79 +1151,72 @@ public class SignalWindow {
         double max = getRecordMax(s);
         s.setMinimum(min);
         s.setMaximum(max);
-        aantaltxt = (int) ((lengte/afstand)+1);           /* Aantal getallen horizontale as */
-        delta_a   = (double)(max-min)/(double)(aantaltxt-1); /* ampl tussen twee getallen */
-        afstand   = (double)(lengte)/(double)(aantaltxt-1);  /* Aantal pixels tussen twee getallen */
+        aantaltxt = (int) ((lengte / afstand) + 1); /* Aantal getallen horizontale as */
+        delta_a = (double) (max - min) / (double) (aantaltxt - 1); /* ampl tussen twee getallen */
+        afstand = (double) (lengte) / (double) (aantaltxt - 1); /* Aantal pixels tussen twee getallen */
 
         gc.setStroke(Color.GRAY);
-        gc.strokeText("--> Magnitude",(lengte/2),maxy-fontHeight);
+        gc.strokeText("--> Magnitude", (lengte / 2), maxy - fontHeight);
 
-        /* print 0  x-as  text*/
+        /* print 0 x-as text */
         String ch = String.format("%5.1f", min);
-        gc.strokeText(ch,LEFT_XOFFS,maxy-28);
+        gc.strokeText(ch, LEFT_XOFFS, maxy - 28);
 
+        /*
+         * for(tel=1;tel < aantaltxt;tel++) {
+         */
+        int tel = aantaltxt - 1;
 
-        /*  for(tel=1;tel < aantaltxt;tel++)
-       {
-        */
-        int tel = aantaltxt -1;
+        /*
+         * xwaarde[tel]=(delta_a*tel+DataRealMin(vp)); sprintf(ch,"%5.1f",xwaarde[tel]);
+         */
 
-        /*  xwaarde[tel]=(delta_a*tel+DataRealMin(vp));
-        sprintf(ch,"%5.1f",xwaarde[tel]);             */
-
-        xwaarde=(delta_a*tel+min);
+        xwaarde = (delta_a * tel + min);
         ch = String.format("%5.1f", xwaarde);
-        gc.strokeText(ch,(int)(tel*afstand+LEFT_XOFFS-25),(int)(maxy-28));
+        gc.strokeText(ch, (int) (tel * afstand + LEFT_XOFFS - 25), (int) (maxy - 28));
 
-        /*   }   */
+        /* } */
 
-
-
-        /* print record_nr en channel_nr  */
+        /* print record_nr en channel_nr */
 
         ch = String.format("Chan: %d", s.getChannel());
-        gc.strokeText(ch,(LEFT_XOFFS+lengte-100),TOP_YOFFS-10);
+        gc.strokeText(ch, (LEFT_XOFFS + lengte - 100), TOP_YOFFS - 10);
 
+        /* teken vertikaal grid */
 
-        /* teken vertikaal grid  */
+        for (int i = 1; i < aantaltxt; i++)
+            gc.strokeLine(LEFT_XOFFS + i * afstand, TOP_YOFFS, LEFT_XOFFS + i * afstand, hoogte + TOP_YOFFS);
 
-        for(int i=1;i < aantaltxt;i++)
-            gc.strokeLine(LEFT_XOFFS+i*afstand, TOP_YOFFS, LEFT_XOFFS+i*afstand, hoogte+TOP_YOFFS);
-
-
-        /* teken de x en y as in zwart (+ boven en rechts)   */
+        /* teken de x en y as in zwart (+ boven en rechts) */
         gc.setStroke(Color.GRAY);
-        gc.strokeLine(LEFT_XOFFS       , TOP_YOFFS          , LEFT_XOFFS        , maxy-BOTTEM_YOFFS);
-        gc.strokeLine(lengte+LEFT_XOFFS, TOP_YOFFS          , lengte+LEFT_XOFFS , maxy-BOTTEM_YOFFS);
-        gc.strokeLine(LEFT_XOFFS       , (maxy-BOTTEM_YOFFS), lengte+LEFT_XOFFS , maxy-BOTTEM_YOFFS);
-        gc.strokeLine(LEFT_XOFFS       , TOP_YOFFS          , lengte+LEFT_XOFFS , TOP_YOFFS);
+        gc.strokeLine(LEFT_XOFFS, TOP_YOFFS, LEFT_XOFFS, maxy - BOTTEM_YOFFS);
+        gc.strokeLine(lengte + LEFT_XOFFS, TOP_YOFFS, lengte + LEFT_XOFFS, maxy - BOTTEM_YOFFS);
+        gc.strokeLine(LEFT_XOFFS, (maxy - BOTTEM_YOFFS), lengte + LEFT_XOFFS, maxy - BOTTEM_YOFFS);
+        gc.strokeLine(LEFT_XOFFS, TOP_YOFFS, lengte + LEFT_XOFFS, TOP_YOFFS);
 
+        /* Bepaal VSCALE m.b.v. Maximum en minimum */
 
-        /* Bepaal VSCALE m.b.v. Maximum en minimum     */
+        double[] real_data = s.getRealData(); /* display real data */
 
-
-        double[] real_data = s.getRealData();     /* display real data */
-
-        Max_abs = 100; /* verschil tussen minimum en maximum in %  */
-        aantaltxt = (int)11;
-        afstand = -hoogte/(aantaltxt-1);
+        Max_abs = 100; /* verschil tussen minimum en maximum in % */
+        aantaltxt = (int) 11;
+        afstand = -hoogte / (aantaltxt - 1);
         delta_n = 10;
 
-        s.setVScale(s.getMaximum()/hoogte);
+        s.setVScale(s.getMaximum() / hoogte);
 
         gc.setStroke(Color.GRAY);
-        for(int i=0;i < aantaltxt;i++)
-        {
-            int ywaarde=(int)(100-delta_n*i);
-            ch = String.format("%7d",ywaarde);
-            gc.strokeText(ch,(LEFT_XOFFS-80),(int)-(i*afstand-TOP_YOFFS-5));
+        for (int i = 0; i < aantaltxt; i++) {
+            int ywaarde = (int) (100 - delta_n * i);
+            ch = String.format("%7d", ywaarde);
+            gc.strokeText(ch, (LEFT_XOFFS - 80), (int) -(i * afstand - TOP_YOFFS - 5));
         }
 
-        gc.strokeText("%%", LEFT_XOFFS, TOP_YOFFS-10);
+        gc.strokeText("%%", LEFT_XOFFS, TOP_YOFFS - 10);
 
-        for(tel=1;tel < aantaltxt-1;tel++)
-        {
-            gc.strokeLine(LEFT_XOFFS+1, -(tel*afstand-TOP_YOFFS), lengte+LEFT_XOFFS-1, -(tel*afstand-TOP_YOFFS));
+        for (tel = 1; tel < aantaltxt - 1; tel++) {
+            gc.strokeLine(LEFT_XOFFS + 1, -(tel * afstand - TOP_YOFFS), lengte + LEFT_XOFFS - 1,
+                    -(tel * afstand - TOP_YOFFS));
         }
 
     }
@@ -1176,45 +1227,42 @@ public class SignalWindow {
      *
      **************************************************************************/
 
-    private void gen_hist_plot(Signal s, GraphicsContext gc)
-    {
+    private void gen_hist_plot(Signal s, GraphicsContext gc) {
         double vscale = s.getVScale();
         double hscale = s.getHScale();
         int hoogte = s.getWindowHeight() - TOP_YOFFS - BOTTEM_YOFFS;
 
         double[] cum = new double[s.getDataLength()];
-        double[] data = s.getRealData();     /* display real data */
+        double[] data = s.getRealData(); /* display real data */
 
         /* Welk record displayen? */
 
-        int offset = (s.getChannel()*s.getDataRecords()+s.getRecord())*s.getDataLength();
+        int offset = (s.getChannel() * s.getDataRecords() + s.getRecord()) * s.getDataLength();
 
-        double[] temp = Arrays.copyOfRange(data, offset, offset+s.getDataLength());
+        double[] temp = Arrays.copyOfRange(data, offset, offset + s.getDataLength());
 
-        cum[0]=temp[0];
+        cum[0] = temp[0];
 
-        for(int i=0; i < s.getDataLength();i++)
-        {
+        for (int i = 0; i < s.getDataLength(); i++) {
             if (i > 0)
-                cum[i]=cum[i-1]+temp[i];
-            temp[i]= (temp[i]/vscale);
+                cum[i] = cum[i - 1] + temp[i];
+            temp[i] = (temp[i] / vscale);
         }
 
-        double cscale=cum[s.getDataLength()-1]/hoogte;
+        double cscale = cum[s.getDataLength() - 1] / hoogte;
 
-        int nul_offs = hoogte+TOP_YOFFS;
+        int nul_offs = hoogte + TOP_YOFFS;
 
         gc.setStroke(Color.BLUE);
-        for(int i=0;i < s.getDataLength();i++)
-        {
-            gc.strokeLine((int)(hscale*i+LEFT_XOFFS), nul_offs, (int)(hscale*i+LEFT_XOFFS), (int)-(temp[i]-nul_offs));
+        for (int i = 0; i < s.getDataLength(); i++) {
+            gc.strokeLine((int) (hscale * i + LEFT_XOFFS), nul_offs, (int) (hscale * i + LEFT_XOFFS),
+                    (int) -(temp[i] - nul_offs));
         }
 
         gc.setStroke(Color.GREEN);
-        for(int i=0;i < (s.getDataLength()-1);i++)
-        {
-            gc.strokeLine((int)(hscale*i+LEFT_XOFFS), (int)-((cum[i]/cscale)-nul_offs), (int)(hscale*(i+1) +
-                LEFT_XOFFS), (int)-((cum[i+1]/cscale)-nul_offs));
+        for (int i = 0; i < (s.getDataLength() - 1); i++) {
+            gc.strokeLine((int) (hscale * i + LEFT_XOFFS), (int) -((cum[i] / cscale) - nul_offs),
+                    (int) (hscale * (i + 1) + LEFT_XOFFS), (int) -((cum[i + 1] / cscale) - nul_offs));
         }
     }
 

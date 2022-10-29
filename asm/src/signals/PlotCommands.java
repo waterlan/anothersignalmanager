@@ -46,13 +46,13 @@ public class PlotCommands {
     }
 
     public Signal RealCi(List<String> arguments, Signal signal) {
-        if (signal.getDataType() == Signal.IMAG) {
-            cp.println("No real part present.");
-            return null;
-        }
         if (!(signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ)) {
             // TODO domain error
             cp.println("domain error");
+            return null;
+        }
+        if (signal.getDataType() == Signal.IMAG) {
+            cp.println("No real part present.");
             return null;
         }
 
@@ -65,13 +65,13 @@ public class PlotCommands {
     }
 
     public Signal ImagCi(List<String> arguments, Signal signal) {
-        if (signal.getDataType() == Signal.REAL) {
-            cp.println("No imaginary part present.");
-            return null;
-        }
         if (!(signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ)) {
             // TODO domain error
             cp.println("domain error");
+            return null;
+        }
+        if (signal.getDataType() == Signal.REAL) {
+            cp.println("No imaginary part present.");
             return null;
         }
 
