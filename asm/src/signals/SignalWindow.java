@@ -165,8 +165,9 @@ public class SignalWindow {
         }
         // TODO : get actual height of menu bar.
         // menuBar.getheight() returns 0.0. Now adding 50.
+        // toolBar.getHeight() idem
         Scene scene = new Scene(root, signal.getWindowWidth(),
-                signal.getWindowHeight() + 50 + 50 /* toolBar.getHeight() */ );
+                signal.getWindowHeight() + 50 + 50 );
         canvas.setWidth(signal.getWindowWidth());
         canvas.setHeight(signal.getWindowHeight());
         root.getChildren().add(menuBar);
@@ -299,14 +300,6 @@ public class SignalWindow {
         gc.strokeLine(LEFT_XOFFS, (maxy - BOTTEM_YOFFS), length + LEFT_XOFFS, maxy - BOTTEM_YOFFS);
         gc.strokeLine(LEFT_XOFFS, TOP_YOFFS, length + LEFT_XOFFS, TOP_YOFFS);
 
-        double[] data;
-
-        if (s.getMode() == Signal.REAL_M) {
-            data = s.getRealData(); /* display real data */
-        } else {
-            data = s.getImagData(); /* display imaginary data */
-        }
-
         double Minimum = getRecordMin(s);
         double Maximum = getRecordMax(s);
         if ((Maximum <= 1) && (Maximum >= 0.0))
@@ -403,15 +396,6 @@ public class SignalWindow {
         gc.strokeLine(LEFT_XOFFS, (maxy - BOTTEM_YOFFS), lengte + LEFT_XOFFS, maxy - BOTTEM_YOFFS);
         gc.strokeLine(LEFT_XOFFS, TOP_YOFFS, lengte + LEFT_XOFFS, TOP_YOFFS);
 
-        double[] data;
-        /* Bepaal VSCALE m.b.v. Maximum en minimum */
-        if (s.getMode() == Signal.REAL_M) {
-            data = s.getRealData(); /* display real data */
-        } else {
-            data = s.getImagData(); /* display imaginary data */
-        }
-
-        int offset = s.getRecord() * s.getDataLength();
         double Minimum = getRecordMin(s);
         double Maximum = getRecordMax(s);
 

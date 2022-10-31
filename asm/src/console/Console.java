@@ -14,6 +14,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import signals.Signal;
@@ -81,7 +82,6 @@ public class Console {
         
         
         consoleText.setEditable(false);
-        // System.out.printf("max h %f\n",consoleText.getMaxHeight());
         consoleInput.setPromptText("Enter command here");
 
         consoleInput.setOnAction(e -> {
@@ -94,6 +94,7 @@ public class Console {
         });
 
         v.getChildren().add(menuBar);
+        VBox.setVgrow(consoleText, Priority.ALWAYS);
         v.getChildren().add(consoleText);
         v.getChildren().add(consoleInput);
     }
