@@ -11,35 +11,35 @@ import exceptions.SignalDoesNotExist;
 import signals.Signal;
 import signals.Sources;
 
-public class Calculations extends MathBase{
+public class Calculations extends MathBase {
     public static final Map<String, String[]> calculations = new HashMap<String, String[]>() {
         {
-            put("absolute", new String[]{"twoInputsOneOutputCi",""});
-            put("add", new String[]{"twoInputsOneOutputCi",""});
-            put("assign", new String[]{"assign",""});
-            put("cabs", new String[]{"oneInputOneOutputCi",""});
-            put("cadd", new String[]{"oneInputOneValueOneOutputCi",""});
-            put("cdivide", new String[]{"oneInputOneValueOneOutputCi",""});
-            put("clear", new String[]{"clear",""});
-            put("clip", new String[]{"clip",""});
-            put("cmultiply", new String[]{"oneInputOneValueOneOutputCi",""});
-            put("conjugate", new String[]{"oneInputOneOutputCi",""});
-            put("copy", new String[]{"oneInputOneOutputCi",""});
-            put("cosine", new String[]{"oneInputOneOutputCi",""});
-            put("divide", new String[]{"twoInputsOneOutputCi",""});
-            put("epow", new String[]{"oneInputOneOutputCi",""});
-            put("inv", new String[]{"oneInputOneOutputCi",""});
-            put("ln", new String[]{"oneInputOneOutputCi",""});
-            put("log", new String[]{"oneInputOneOutputCi",""});
-            put("maximum", new String[]{"twoInputsOneOutputCi",""});
-            put("minimum", new String[]{"twoInputsOneOutputCi",""});
-            put("multiply", new String[]{"multiply",""});
-            put("rotate", new String[]{"oneInputOneValueOneOutputCi",""});
-            put("shift", new String[]{"oneInputOneValueOneOutputCi",""});
-            put("sine", new String[]{"oneInputOneOutputCi",""});
-            put("subtract", new String[]{"twoInputsOneOutputCi",""});
-            put("tenpow", new String[]{"oneInputOneOutputCi",""});
-            put("zeropad", new String[]{"oneInputOneOutputCi",""});
+            put("absolute", new String[] { "twoInputsOneOutputCi", "" });
+            put("add", new String[] { "twoInputsOneOutputCi", "" });
+            put("assign", new String[] { "assign", "" });
+            put("cabs", new String[] { "oneInputOneOutputCi", "" });
+            put("cadd", new String[] { "oneInputOneValueOneOutputCi", "" });
+            put("cdivide", new String[] { "oneInputOneValueOneOutputCi", "" });
+            put("clear", new String[] { "clear", "" });
+            put("clip", new String[] { "clip", "" });
+            put("cmultiply", new String[] { "oneInputOneValueOneOutputCi", "" });
+            put("conjugate", new String[] { "oneInputOneOutputCi", "" });
+            put("copy", new String[] { "oneInputOneOutputCi", "" });
+            put("cosine", new String[] { "oneInputOneOutputCi", "" });
+            put("divide", new String[] { "twoInputsOneOutputCi", "" });
+            put("epow", new String[] { "oneInputOneOutputCi", "" });
+            put("inv", new String[] { "oneInputOneOutputCi", "" });
+            put("ln", new String[] { "oneInputOneOutputCi", "" });
+            put("log", new String[] { "oneInputOneOutputCi", "" });
+            put("maximum", new String[] { "twoInputsOneOutputCi", "" });
+            put("minimum", new String[] { "twoInputsOneOutputCi", "" });
+            put("multiply", new String[] { "multiply", "" });
+            put("rotate", new String[] { "oneInputOneValueOneOutputCi", "" });
+            put("shift", new String[] { "oneInputOneValueOneOutputCi", "" });
+            put("sine", new String[] { "oneInputOneOutputCi", "" });
+            put("subtract", new String[] { "twoInputsOneOutputCi", "" });
+            put("tenpow", new String[] { "oneInputOneOutputCi", "" });
+            put("zeropad", new String[] { "oneInputOneOutputCi", "" });
         }
     };
 
@@ -425,7 +425,7 @@ public class Calculations extends MathBase{
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         int rotate = (int) value;
-        rotate = rotate%channelLength;
+        rotate = rotate % channelLength;
         double[] re_out = new double[length];
         double[] im_out = new double[length];
 
@@ -466,7 +466,7 @@ public class Calculations extends MathBase{
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         int shift = (int) value;
-        shift = shift%channelLength;
+        shift = shift % channelLength;
         double[] re_out = new double[length];
         double[] im_out = new double[length];
 
@@ -563,7 +563,7 @@ public class Calculations extends MathBase{
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
             {
                 for (int record = 0; record < signal.getDataRecords(); record++) {
-                    /* Bereken offset van betreffende record */
+                    /* Calculate offset of the concerning record */
                     int offset = (channel * signal.getDataRecords() + record) * dataLength;
 
                     for (int i = 0; i < dataLength; i++) {
@@ -601,7 +601,7 @@ public class Calculations extends MathBase{
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
 
             for (int record = 0; record < signal.getDataRecords(); record++) {
-                /* Bereken offset van betreffende record */
+                /* Calculate offset of the concerning record */
                 int offset = (channel * signal.getDataRecords() + record) * dataLength;
                 for (int i = 0; i < dataLength; i++) {
                     if ((i < left) || ((i > right) && (i < (dataLength - right - 1)))
@@ -632,9 +632,9 @@ public class Calculations extends MathBase{
             System.out.println("domain error");
             return null;
         }
-        int left=0, right=signal.getDataLength();
-        double leftfreq=1.0, rightfreq=(signal.getDataSampleRate() / 2) * 10;
-        double attenuation=50.0;
+        int left = 0, right = signal.getDataLength();
+        double leftfreq = 1.0, rightfreq = (signal.getDataSampleRate() / 2) * 10;
+        double attenuation = 50.0;
         if (signal.getDataDomain() == Signal.FREQ) {
             double maxValue = (signal.getDataSampleRate() / 2) * 10;
             leftfreq = cp.getDouble(arguments, "left (frequency)", 1.0, maxValue, 1.0);
@@ -645,7 +645,7 @@ public class Calculations extends MathBase{
             left = cp.getInt(arguments, "left (element)", 0, maxValue, 0);
             right = cp.getInt(arguments, "right (element)", 0, maxValue, 0);
             // The GUI dialog passes attenuation. Command line not.
-            if (arguments.size()>1) {
+            if (arguments.size() > 1) {
                 // dummy read.
                 attenuation = cp.getDouble(arguments, "attenuation", 0.0, 100.0, 50.0);
             }

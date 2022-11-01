@@ -12,7 +12,7 @@ public class FFT {
      * @param real
      * @param imag
      * @param npoints length of array.
-     * @param dir   1: forward fft, -1: inverse fft.
+     * @param dir     1: forward fft, -1: inverse fft.
      * @return
      */
     public static int fft(double[] real, double[] imag, int npoints, int dir) {

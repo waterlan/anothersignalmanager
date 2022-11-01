@@ -16,22 +16,23 @@ public class Sources extends SourcesBase {
     private static final int RAND_MAX = 0x7fff;
     public static final Map<String, String[]> functions = new HashMap<String, String[]>() {
         {
-            put("fconstant", new String[]{"FconstCi", ""});
-            put("fcosine", new String[]{"FcosineCi", ""});
-            put("fdelta", new String[]{"FdeltaCi", ""});
-            put("fexp", new String[]{"FexpCi", ""});
-            put("fnoise", new String[]{"FnoiseCi", ""});
-            put("framp", new String[]{"FrampCi", ""});
-            put("fsinc", new String[]{"FsinecCi", ""});
-            put("fsine", new String[]{"FsineCi", "fsine <name> <offset> <amplitude> <freq> <phase> <type> <elements> <samplerate>"});
-            put("fsquare", new String[]{"FsquarewaveCi", ""});
-            put("fstep", new String[]{"FstepCi", ""});
-            put("ftriangle", new String[]{"FtriangleCi", ""});
+            put("fconstant", new String[] { "FconstCi", "" });
+            put("fcosine", new String[] { "FcosineCi", "" });
+            put("fdelta", new String[] { "FdeltaCi", "" });
+            put("fexp", new String[] { "FexpCi", "" });
+            put("fnoise", new String[] { "FnoiseCi", "" });
+            put("framp", new String[] { "FrampCi", "" });
+            put("fsinc", new String[] { "FsinecCi", "" });
+            put("fsine", new String[] { "FsineCi",
+                    "fsine <name> <offset> <amplitude> <freq> <phase> <type> <elements> <samplerate>" });
+            put("fsquare", new String[] { "FsquarewaveCi", "" });
+            put("fstep", new String[] { "FstepCi", "" });
+            put("ftriangle", new String[] { "FtriangleCi", "" });
         }
     };
 
     public Sources(Map<String, Signal> signals, CommandLineParser cp) {
-        super(signals,cp);
+        super(signals, cp);
     }
 
     private void source(Signal s, List<Double> parameters) {
@@ -93,7 +94,7 @@ public class Sources extends SourcesBase {
             data[i] = ampl;
         }
     }
-    
+
     public void constant(Signal s, List<Double> parameters) {
         double ampl = parameters.get(0);
 
@@ -124,10 +125,10 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    public static void delta(double data[], double ampl, double t0, double sampler) {
+    public static void delta(double data[], double ampl, double t0, double sampleRate) {
         boolean flag = true;
         for (int i = 0; i < data.length; i++) {
-            double t = (double) i / (double) sampler;
+            double t = (double) i / (double) sampleRate;
             if (t < t0)
                 data[i] = (double) (0);
             else if ((t >= t0) && flag) {
@@ -137,20 +138,20 @@ public class Sources extends SourcesBase {
                 data[i] = 0.0;
         }
     }
-    
+
     public void delta(Signal s, List<Double> parameters) {
         double ampl = parameters.get(0);
         double t0 = parameters.get(1);
         t0 = t0 / 1000.0; /* t0 in sec */
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
             data = s.getImagData();
         else
             data = s.getRealData();
-        
-        delta(data, ampl, t0, sampler);
+
+        delta(data, ampl, t0, sampleRate);
     }
 
     public Signal FdeltaCi(Signal im, List<String> arguments) {
@@ -174,10 +175,10 @@ public class Sources extends SourcesBase {
         return im;
     }
 
-    private static void step(double data[], double offs, double ampl, double t0, int sampler) {
+    private static void step(double data[], double offs, double ampl, double t0, int sampleRate) {
         double t;
         for (int i = 0; i < data.length; i++) {
-            t = (double) i / (double) sampler;
+            t = (double) i / (double) sampleRate;
             if (t < t0)
                 data[i] = offs;
             if (t >= t0)
@@ -190,7 +191,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double t0 = parameters.get(2);
         t0 = t0 / 1000.0; /* t0 in sec */
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -198,7 +199,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        step(data, offs, ampl, t0, sampler);
+        step(data, offs, ampl, t0, sampleRate);
     }
 
     public Signal FstepCi(Signal s, List<String> arguments) {
@@ -264,9 +265,9 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void sine(double data[], double offs, double ampl, double freq, double phi0, int sampler) {
+    private static void sine(double data[], double offs, double ampl, double freq, double phi0, int sampleRate) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = offs + ampl * Math.sin(2 * Math.PI * freq * i / sampler + phi0);
+            data[i] = offs + ampl * Math.sin(2 * Math.PI * freq * i / sampleRate + phi0);
         }
     }
 
@@ -275,7 +276,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -283,7 +284,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        sine(data, offs, ampl, freq, phi0, sampler);
+        sine(data, offs, ampl, freq, phi0, sampleRate);
     }
 
     public Signal FsineCi(Signal s, List<String> arguments) {
@@ -311,10 +312,10 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void sinec(double data[], double offs, double ampl, double freq, int sampler) {
+    private static void sinec(double data[], double offs, double ampl, double freq, int sampleRate) {
         int number = data.length;
         for (int i = 0; i < data.length; i++) {
-            double t = (double) (i - number / 2.0) / (double) sampler;
+            double t = (double) (i - number / 2.0) / (double) sampleRate;
             double arg = 2.0 * Math.PI * freq * t;
             if (t != 0.0)
                 data[i] = (double) (offs + ampl * Math.sin(arg) / arg);
@@ -327,7 +328,7 @@ public class Sources extends SourcesBase {
         double offs = parameters.get(0);
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -335,7 +336,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        sinec(data, offs, ampl, freq, sampler);
+        sinec(data, offs, ampl, freq, sampleRate);
     }
 
     /**
@@ -368,9 +369,9 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void cosine(double data[], double offs, double ampl, double freq, double phi0, int sampler) {
+    private static void cosine(double data[], double offs, double ampl, double freq, double phi0, int sampleRate) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = offs + ampl * Math.cos(2 * Math.PI * freq * i / sampler + phi0);
+            data[i] = offs + ampl * Math.cos(2 * Math.PI * freq * i / sampleRate + phi0);
         }
     }
 
@@ -379,7 +380,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -387,7 +388,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        cosine(data, offs, ampl, freq, phi0, sampler);
+        cosine(data, offs, ampl, freq, phi0, sampleRate);
     }
 
     public Signal FcosineCi(Signal s, List<String> arguments) {
@@ -415,10 +416,11 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void triangle(double data[], double offs, double ampl, int sampler, double T, double rc, double t0) {
+    private static void triangle(double data[], double offs, double ampl, int sampleRate, double T, double rc,
+            double t0) {
         double n = 0;
         for (int i = 0; i < data.length; i++) {
-            double t = (double) (i) / (double) (sampler);
+            double t = (double) (i) / (double) (sampleRate);
             if ((t - T * n + t0) < (T / 2.0)) {
                 data[i] = (double) (rc * (t - n * T + t0) - ampl + offs);
             }
@@ -435,7 +437,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -446,7 +448,7 @@ public class Sources extends SourcesBase {
         double T = (double) (1) / (double) (freq); /* period time */
         double rc = 4.0 * ampl * freq; /* slope */
         double t0 = (phi0 * T) / (double) (2.0 * Math.PI);
-        triangle(data, offs, ampl, sampler, T, rc, t0);
+        triangle(data, offs, ampl, sampleRate, T, rc, t0);
     }
 
     public Signal FtriangleCi(Signal s, List<String> arguments) {
@@ -474,11 +476,11 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void exp(double data[], double ampl, double T, int sampler) {
+    private static void exp(double data[], double ampl, double T, int sampleRate) {
         double t;
         T = T / 1000.0; // T in seconds
         for (int i = 0; i < data.length; i++) {
-            t = (double) i / (double) sampler;
+            t = (double) i / (double) sampleRate;
             data[i] = ampl * (Math.exp(-t / T));
         }
     }
@@ -486,7 +488,7 @@ public class Sources extends SourcesBase {
     public void exp(Signal s, List<Double> parameters) {
         double ampl = parameters.get(0);
         double T = parameters.get(1);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -494,7 +496,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        exp(data, ampl, T, sampler);
+        exp(data, ampl, T, sampleRate);
     }
 
     /********************************************************************
@@ -521,12 +523,12 @@ public class Sources extends SourcesBase {
         return s;
     }
 
-    private static void square(double data[], double offs, double ampl, double dutyCycle, int sampler, double T) {
+    private static void square(double data[], double offs, double ampl, double dutyCycle, int sampleRate, double T) {
         int n = 0;
         double B, t;
         double dc = dutyCycle / 100.0;
         for (int i = 0; i < data.length; i++) {
-            t = (double) i / (double) sampler;
+            t = (double) i / (double) sampleRate;
             if ((t - T * n) < (dc * T)) {
                 B = 1;
             } else {
@@ -543,7 +545,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double dutyCycle = parameters.get(3);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -552,7 +554,7 @@ public class Sources extends SourcesBase {
             data = s.getRealData();
 
         double T = (double) (1) / (double) (freq); /* period time */
-        square(data, offs, ampl, dutyCycle, sampler, T);
+        square(data, offs, ampl, dutyCycle, sampleRate, T);
     }
 
     public Signal FsquarewaveCi(Signal s, List<String> arguments) {
@@ -579,19 +581,20 @@ public class Sources extends SourcesBase {
 
         return s;
     }
-    private static void ramp(double data[], double offs, double ampl, int sampler) {
-        double rc = ampl*(double)sampler/(double)(data.length -1);
+
+    private static void ramp(double data[], double offs, double ampl, int sampleRate) {
+        double rc = ampl * (double) sampleRate / (double) (data.length - 1);
         double t;
         for (int i = 0; i < data.length; i++) {
-            t = (double) i / (double) sampler;
-            data[i] = (double) (rc*t + offs);
+            t = (double) i / (double) sampleRate;
+            data[i] = (double) (rc * t + offs);
         }
     }
 
     public void ramp(Signal s, List<Double> parameters) {
         double offs = parameters.get(0);
         double ampl = parameters.get(1);
-        int sampler = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate() * 10;
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -599,7 +602,7 @@ public class Sources extends SourcesBase {
         else
             data = s.getRealData();
 
-        ramp(data, offs, ampl, sampler);
+        ramp(data, offs, ampl, sampleRate);
     }
 
     public Signal FrampCi(Signal s, List<String> arguments) {
@@ -653,7 +656,7 @@ public class Sources extends SourcesBase {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
         return outputSignal;
     }

@@ -16,18 +16,18 @@ public class Transformations extends MathBase {
 
     public static final Map<String, String[]> transformations = new HashMap<String, String[]>() {
         {
-            put("fft", new String[]{"FFTCi",""});
-            put("ifft", new String[]{"IFFTCi",""});
-            put("magnitude", new String[]{"MagnitudeCi",""});
-            put("phase", new String[]{"PhaseCi",""});
-            put("histogram", new String[]{"HistCi",""});
+            put("fft", new String[] { "FFTCi", "" });
+            put("ifft", new String[] { "IFFTCi", "" });
+            put("magnitude", new String[] { "MagnitudeCi", "" });
+            put("phase", new String[] { "PhaseCi", "" });
+            put("histogram", new String[] { "HistCi", "" });
         }
     };
 
     public Transformations(Map<String, Signal> signals, CommandLineParser cp) {
         super(signals, cp);
     }
-    
+
     public static void fft(double[] real, double[] imag, int offset, int fft_length, int dir) {
         double re[] = Arrays.copyOfRange(real, offset, offset + fft_length);
         double im[] = Arrays.copyOfRange(imag, offset, offset + fft_length);
@@ -46,8 +46,8 @@ public class Transformations extends MathBase {
         if (fft_length > signal.getDataLength())
             fft_length = signal.getDataLength();
         int records_out = ((signal.getDataLength() * signal.getDataRecords()) / fft_length);
-        cp.println("fft_length = " + fft_length);
-        cp.println("records_out = " + records_out);
+        // cp.println("fft_length = " + fft_length);
+        // cp.println("records_out = " + records_out);
         double[] re_out = new double[dataLength];
         double[] im_out = new double[dataLength];
 
@@ -162,7 +162,7 @@ public class Transformations extends MathBase {
         double[] re_out = new double[signal.getDataChannels() * signal.getDataLength()];
         double[] im_out = new double[signal.getDataChannels() * signal.getDataLength()];
 
-        double[] cum1 = new double[signal.getDataLength()];
+        double[] cumulative1 = new double[signal.getDataLength()];
 
         if (mid_type == 0) {
             for (int channel = 0; channel < signal.getDataChannels(); channel++) {
@@ -171,44 +171,44 @@ public class Transformations extends MathBase {
                     for (int i = 0; i < dataLength; i++) {
                         int data_nr = offset + record * dataLength + i;
                         double temp = Math.sqrt(Math.pow(re[data_nr], 2) + Math.pow(im[data_nr], 2));
-                        /* Tel de magnitudes bij elkaar op */
-                        cum1[i] = cum1[i] + temp;
+                        /* Add up the magnitudes */
+                        cumulative1[i] = cumulative1[i] + temp;
                     }
                 }
                 for (int i = 0; i < dataLength; i++) {
-                    /* Deel de cumulatieve magnitudes door het aantal records */
-                    cum1[i] = cum1[i] / (double) signal.getDataRecords();
-                    /* In het magnitude domein bevatten de channels altijd maar 1 record */
-                    re_out[i + channel * dataLength] = cum1[i];
+                    /* Divide the cumulative magnitudes by the number of records */
+                    cumulative1[i] = cumulative1[i] / (double) signal.getDataRecords();
+                    /* In the magnitude domain channels have always 1 record */
+                    re_out[i + channel * dataLength] = cumulative1[i];
                     im_out[i + channel * dataLength] = 0.0;
-                    cum1[i] = 0.0; /* leeg maken voor volgende channel */
+                    cumulative1[i] = 0.0; /* make empty for the next channel */
                 }
             }
         }
         if (mid_type == 1) {
-            double[] cum2 = new double[signal.getDataLength()];
+            double[] cumulative2 = new double[signal.getDataLength()];
             for (int h = 0; h < signal.getDataChannels(); h++) {
-                /* offset van betreffende channel */
+                /* offset of the concerning channel */
                 int offs = h * signal.getDataRecords() * dataLength;
 
                 for (int j = 0; j < signal.getDataRecords(); j++) {
-                    /* Tel de records bij van een channel elkaar op */
+                    /* Add up the records of a channel */
                     for (int i = 0; i < dataLength; i++) {
-                        cum1[i] = cum1[i] + (re[offs + i + j * dataLength]);
-                        cum2[i] = cum2[i] + (im[offs + i + j * dataLength]);
+                        cumulative1[i] = cumulative1[i] + (re[offs + i + j * dataLength]);
+                        cumulative2[i] = cumulative2[i] + (im[offs + i + j * dataLength]);
                     }
                 }
                 for (int i = 0; i < dataLength; i++) {
-                    /* Deel door het aantal records */
-                    cum1[i] = cum1[i] / (double) (signal.getDataRecords());
-                    cum2[i] = cum2[i] / (double) (signal.getDataRecords());
+                    /* Divide by the number of records */
+                    cumulative1[i] = cumulative1[i] / (double) (signal.getDataRecords());
+                    cumulative2[i] = cumulative2[i] / (double) (signal.getDataRecords());
 
-                    /* Bepaal de magnitude */
-                    /* In het magnitude domein bevatten de channels altijd maar 1 record */
-                    re_out[i + h * dataLength] = Math.sqrt(Math.pow(cum1[i], 2) + Math.pow(cum2[i], 2));
+                    /* Determine the magnitude */
+                    /* In the magnitude domain channels have always 1 record */
+                    re_out[i + h * dataLength] = Math.sqrt(Math.pow(cumulative1[i], 2) + Math.pow(cumulative2[i], 2));
                     im_out[i + h * dataLength] = 0.0;
 
-                    cum1[i] = cum2[i] = 0.0; /* leeg maken voor volgend channel */
+                    cumulative1[i] = cumulative2[i] = 0.0; /* make empty for next channel */
                 }
             }
         }
@@ -262,63 +262,63 @@ public class Transformations extends MathBase {
         double[] re_out = new double[signal.getDataChannels() * signal.getDataLength()];
         double[] im_out = new double[signal.getDataChannels() * signal.getDataLength()];
 
-        double[] cum1 = new double[dataLength];
+        double[] cumulative1 = new double[dataLength];
 
         if (mid_type == 0) {
-            for (int h = 0; h < signal.getDataChannels(); h++) /* aantal channels */
+            for (int h = 0; h < signal.getDataChannels(); h++) /* number of channels */
             {
 
-                for (int j = 0; j < signal.getDataRecords(); j++) /* aantal records */
+                for (int j = 0; j < signal.getDataRecords(); j++) /* number of records */
                 {
-                    /* Bereken het adres van record j in channel h */
+                    /* Calculate the address of record j in channel h */
                     int offset = h * channelLength + j * dataLength;
-                    for (int i = 0; i < dataLength; i++) /* record-lengte */
+                    for (int i = 0; i < dataLength; i++) /* record-length */
                     {
-                        /* bepaal de phase */
+                        /* determine the phase */
                         double temp = (180 / Math.PI) * Math.atan2((im[i + offset]), (re[i + offset]));
-                        cum1[i] = cum1[i] + temp; /* Cumulatief */
+                        cumulative1[i] = cumulative1[i] + temp; /* Cumulative */
                     }
                 }
 
-                /* Bereken het adres van channel h */
-                /* In het fase domein bevat een channel altijd maar 1 record */
+                /* Calculate the address of channel h */
+                /* In the phase domain a channel has always 1 record */
                 int offset = h * dataLength;
 
-                /* Deel de cumulatieve fase door het aantal records */
+                /* Divide the cumulative phase by the number of records */
                 for (int i = 0; i < dataLength; i++) {
-                    re_out[i + offset] = cum1[i] / (double) (signal.getDataRecords());
+                    re_out[i + offset] = cumulative1[i] / (double) (signal.getDataRecords());
                     im_out[i + offset] = 0.0;
-                    cum1[i] = 0.0; /* leeg maken voor volgende channel */
+                    cumulative1[i] = 0.0; /* leeg maken voor volgende channel */
                 }
             }
         }
         if (mid_type == 1) {
-            double[] cum2 = new double[dataLength];
+            double[] cumulative2 = new double[dataLength];
             for (int h = 0; h < signal.getDataChannels(); h++) {
 
                 for (int j = 0; j < signal.getDataRecords(); j++) {
-                    /* Bereken het adres van record j in channel h */
+                    /* Calculate the address of record j in channel h */
                     int offset = h * channelLength + j * dataLength;
                     for (int i = 0; i < dataLength; i++) {
-                        /* Tel de records bij elkaar op */
-                        cum1[i] = cum1[i] + re[i + offset];
-                        cum2[i] = cum2[i] + im[i + offset];
+                        /* Add up the records */
+                        cumulative1[i] = cumulative1[i] + re[i + offset];
+                        cumulative2[i] = cumulative2[i] + im[i + offset];
                     }
                 }
 
-                /* Bereken het adres van channel h */
-                /* In het fase domein bevat een channel altijd maar 1 record */
+                /* Calculate the address of channel h */
+                /* In the phase domain a channel has always 1 record */
                 int offset = h * dataLength;
 
                 for (int i = 0; i < dataLength; i++) {
-                    /* deel door het aantal records */
-                    cum1[i] = cum1[i] / (double) (signal.getDataRecords());
-                    cum2[i] = cum2[i] / (double) (signal.getDataRecords());
-                    /* Bepaal de fase */
-                    re_out[i + offset] = (180 / Math.PI) * Math.atan2(cum2[i], cum1[i]);
+                    /* divide by the number of records */
+                    cumulative1[i] = cumulative1[i] / (double) (signal.getDataRecords());
+                    cumulative2[i] = cumulative2[i] / (double) (signal.getDataRecords());
+                    /* Determine the phase */
+                    re_out[i + offset] = (180 / Math.PI) * Math.atan2(cumulative2[i], cumulative1[i]);
                     im_out[i + offset] = 0.0;
 
-                    cum1[i] = cum2[i] = 0.0; /* leeg maken voor volgend channel */
+                    cumulative1[i] = cumulative2[i] = 0.0; /* make empty for next channel */
                 }
             }
         }
@@ -381,7 +381,7 @@ public class Transformations extends MathBase {
 
         double[] real_hulp = Arrays.copyOfRange(re, 0, re.length);
 
-        outputSignal.setRealData(re_out); /* Zet de pointers van de data weer terug */
+        outputSignal.setRealData(re_out); /* Set the data pointers back */
         outputSignal.setImagData(im_out);
 
         outputSignal.setDataLength(buckets);
@@ -393,32 +393,32 @@ public class Transformations extends MathBase {
         outputSignal.setHScale(signal.getHScale());
 
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
-            /* Het histogram wordt per channel van het ingangssignaal bepaalt */
-            /* In het histogram gaat het om de magnitude */
+            /* The histogram is determined per channel of the input signal */
+            /* In the histogram it's about magnitude */
 
-            /* Bereken de offset van het channel */
+            /* Calculate the offset of the channel */
             offset_in = channel * lengte;
             offset_out = (channel) * outputSignal.getDataRecords() * outputSignal.getDataLength();
 
             double reMin, reMax;
             reMin = reMax = Math.sqrt(Math.pow(real_hulp[offset_in], 2) + Math.pow(im[offset_in], 2));
 
-            /* Bepaal van de elementen de magnitude en het maximum en minimum */
+            /* Determine of the elements of the magnitude the maximum and minimum */
             for (int element = 0; element < lengte; element++) {
-                real_hulp[element + offset_in] = Math.sqrt(
-                        Math.pow(real_hulp[element + offset_in], 2) + Math.pow(im[element + offset_in], 2));
+                real_hulp[element + offset_in] = Math
+                        .sqrt(Math.pow(real_hulp[element + offset_in], 2) + Math.pow(im[element + offset_in], 2));
                 if (real_hulp[element + offset_in] > reMax)
                     reMax = real_hulp[element + offset_in];
                 if (real_hulp[element + offset_in] < reMin)
                     reMin = real_hulp[element + offset_in];
             }
-            // FIXME: max and min are overwritten by every next channel. 
+            // FIXME: max and min are overwritten by every next channel.
             outputSignal.setRealMaximum(reMax);
             outputSignal.setRealMinimum(reMin);
 
             Delta = (double) ((reMax - reMin) / (double) (buckets));
 
-            /* Maak de elementen van out_im 0 */
+            /* Make the elements of out_im 0 */
             for (int i = 0; i < (outputSignal.getDataRecords() * outputSignal.getDataLength()); i++) {
                 re_out[i + offset_out] = 0.0;
                 im_out[i + offset_out] = 0.0;

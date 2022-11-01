@@ -53,11 +53,11 @@ public class Signal {
     int Wlenx; /* x - dimension */
     int Wleny; /* y - dimension */
     int display_mode; /* don, <1-5> */
-    double vscale = 1.0; /* vertikale scale factor */
-    double hscale = 1.0; /* horizontale scale factor */
+    double vscale = 1.0; /* vertical scale factor */
+    double hscale = 1.0; /* horizontal scale factor */
     int averageType = 0;
-    double maximum; /* maximale waarde van een array */
-    double minimum; /* minimale waarde van een array */
+    double maximum; /* maximal value of an array */
+    double minimum; /* minimal value of an array */
     byte[] windowName; /* window name */
     byte[] fileName;
     int log = 0; /* log axis ? */
@@ -79,16 +79,16 @@ public class Signal {
     public class AsmHeader {
         short pixel_format; /* 0 = unpacked 1 = packed */
         int length; /* Aantal samples per record */
-        int n_channels; /* Aantal channels */
+        int n_channels; /* Number of channels */
         short file_seq; /* File sequence number = 0 */
         short bits_p_samp; /* bps 8, 16, 32, 3232, 6464 */
-        int n_records; /* Aantal records */
+        int n_records; /* Number of records */
         short domain_id; /* 0=time, 1=freq, 2=ampl, 3=magnitude, 4= fase */
-        short datatype_id; /* 0=real, 1=imaginair, 2= complex */
+        short datatype_id; /* 0=real, 1=imaginary, 2= complex */
         double[] real_data; /* pointer to real data */
         double[] imag_data; /* pointer to imaginary data */
         int sample_rate; /* Sample-rate in 10 Hz */
-        short[] reserved; /* Gereserveerd */
+        short[] reserved; /* Reserved */
         double[] numerical;
         byte[] asm_id_string;
         byte[] signal_name;
@@ -481,7 +481,7 @@ public class Signal {
             in.read(header.user_text);
             in.read(header.date);
             in.read(header.description);
-            int length = this.getDataLength()*this.getDataRecords()*this.getDataChannels();
+            int length = this.getDataLength() * this.getDataRecords() * this.getDataChannels();
             if (this.getDataType() == REAL || this.getDataType() == COMP) {
                 double[] real_data = new double[length];
                 for (int i = 0; i < length; i++) {
