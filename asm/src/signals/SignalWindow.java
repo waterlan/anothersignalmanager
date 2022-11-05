@@ -5,6 +5,10 @@ import java.util.Map;
 
 import console.CommandLineParser;
 import dialogs.SaveSignalDialog;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,9 +17,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class SignalWindow {
@@ -36,11 +44,15 @@ public class SignalWindow {
     private final MenuBar menuBar = new MenuBar();
     private final ToolBar toolBar = new ToolBar();
     private final ComboBox<String> viewMode = new ComboBox<String>();
+    private final ScrollPane scrollPane = new ScrollPane();
     private boolean viewModeReact = true;
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final Stage stage = new Stage();
     private boolean bon = false;
+    private int screenWidth;
+    VBox root = new VBox();
+    Scene scene;
 
     public SignalWindow(Signal s, CommandLineParser parser, Map<String, Signal> signals) {
         this.signal = s;
@@ -48,7 +60,9 @@ public class SignalWindow {
 
         Menu menuFile = new Menu("File");
         MenuItem menuItemSave = new MenuItem("Save");
+        MenuItem menuItemExit = new MenuItem("Exit");
         menuFile.getItems().add(menuItemSave);
+        menuFile.getItems().add(menuItemExit);
 
         Menu menuView = new Menu("View");
         MenuItem menuItemConsole = new MenuItem("Console");
@@ -56,6 +70,9 @@ public class SignalWindow {
 
         menuItemSave.setOnAction(e -> {
             new SaveSignalDialog(parser, signals, s.getName());
+        });
+        menuItemExit.setOnAction(e -> {
+            System.exit(0);
         });
         menuItemConsole.setOnAction(e -> {
             parser.showConsole();
@@ -67,11 +84,14 @@ public class SignalWindow {
         Button zoomOutButton = new Button("-");
 
         zoomInButton.setOnAction(event -> {
-            s.setHScale(s.getHScale() / 0.8);
-            this.show(bon);
+            double hscale = s.getHScale() / 0.9;
+            if (canRender(hscale)) {
+                s.setHScale(hscale);
+                this.show(bon);
+            }
         });
         zoomOutButton.setOnAction(event -> {
-            s.setHScale(s.getHScale() * 0.8);
+            s.setHScale(s.getHScale() * 0.9);
             this.show(bon);
         });
 
@@ -97,9 +117,25 @@ public class SignalWindow {
                 }
             }
         });
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        screenWidth = (int) screenBounds.getWidth();
+        System.out.println("screen width " + screenWidth);
 
-        canvas = new Canvas(signal.getWindowWidth(), signal.getWindowHeight());
+        double sceneWidth = getCanvasWidth() > screenWidth * 0.8 ? screenWidth * 0.8 : getCanvasWidth();
+        // TODO : get actual height of menu bar.
+        // menuBar.getheight() returns 0.0. Now adding 50.
+        // toolBar.getHeight() idem
+        scene = new Scene(root, sceneWidth, getCanvasHeight() + 50 + 50);
+        canvas = new Canvas(getCanvasWidth(), getCanvasHeight());
         gc = canvas.getGraphicsContext2D();
+
+        root.getChildren().add(menuBar);
+        root.getChildren().add(toolBar);
+        root.getChildren().add(scrollPane);
+        scrollPane.setPrefSize(sceneWidth, signal.getWindowHeight());
+        scrollPane.setContent(canvas);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
         this.show(bon);
     }
 
@@ -154,25 +190,11 @@ public class SignalWindow {
         }
 
         viewModeReact = true;
-        VBox root = new VBox();
 
-        signal.setWindowWidth((int) (signal.getHScale() * signal.getDataLength() + LEFT_XOFFS + RIGHT_XOFFS));
-        if (signal.getMode() == Signal.BODE_M) {
-            signal.setWindowHeight(
-                    BODE_SIGNAL_HEIGHT + (int) (BODE_SIGNAL_HEIGHT / PH_MAG) + 2 * TOP_YOFFS + BOTTOM_YOFFS);
-        } else {
-            signal.setWindowHeight(SIGNAL_HEIGHT + TOP_YOFFS + BOTTOM_YOFFS);
-        }
-        // TODO : get actual height of menu bar.
-        // menuBar.getheight() returns 0.0. Now adding 50.
-        // toolBar.getHeight() idem
-        Scene scene = new Scene(root, signal.getWindowWidth(), signal.getWindowHeight() + 50 + 50);
-        canvas.setWidth(signal.getWindowWidth());
-        canvas.setHeight(signal.getWindowHeight());
-        root.getChildren().add(menuBar);
-        root.getChildren().add(toolBar);
-        root.getChildren().add(canvas);
-
+        canvas.setWidth(getCanvasWidth());
+        canvas.setHeight(getCanvasHeight());
+        signal.setWindowWidth((int) canvas.getWidth());
+        signal.setWindowHeight((int) canvas.getHeight());
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         switch (this.signal.getMode()) {
@@ -206,7 +228,36 @@ public class SignalWindow {
 
         stage.setScene(scene);
         stage.setTitle("Signal " + this.signal.getName() + " " + mode);
+        if (canvas.getWidth() < stage.getWidth()
+                || (canvas.getWidth() > stage.getWidth() && canvas.getWidth() < screenWidth * 0.8))
+            stage.setWidth(canvas.getWidth());
         stage.show();
+    }
+
+    private int getCanvasWidth(double newHScale) {
+        return (int) (newHScale * signal.getDataLength() + LEFT_XOFFS + RIGHT_XOFFS);
+    }
+
+    private int getCanvasWidth() {
+        return (int) getCanvasWidth(signal.getHScale());
+    }
+
+    private int getCanvasHeight() {
+        if (signal.getMode() == Signal.BODE_M) {
+            return BODE_SIGNAL_HEIGHT + (int) (BODE_SIGNAL_HEIGHT / PH_MAG) + 2 * TOP_YOFFS + BOTTOM_YOFFS;
+        } else {
+            return SIGNAL_HEIGHT + TOP_YOFFS + BOTTOM_YOFFS;
+        }
+    }
+
+    public boolean canRender(double hscale) {
+        // If the canvas becomes very large the rendering runs out of
+        // its allocated VRAM space. This causes a NullPointerException.
+        // Default limits may vary per OS. It is possible to allocate
+        // more VRAM by command line options.
+        // For now limit the canvas size. On Windows 10 I noticed problems
+        // above 2.9M pixels.
+        return getCanvasWidth(hscale) * getCanvasHeight() < 2900000;
     }
 
     public void close() {

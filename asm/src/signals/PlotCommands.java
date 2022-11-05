@@ -18,17 +18,17 @@ public class PlotCommands {
 
     public static final Map<String, String[]> plotcommands = new HashMap<String, String[]>() {
         {
-            put("bode", new String[]{"BodeCi",""});
-            put("display", new String[]{"DisplayCi",""});
-            put("imaginary", new String[]{"ImagCi",""});
-            put("info", new String[]{"InfoCi",""});
-            put("list", new String[]{"ListCi",""});
-            put("print", new String[]{"PrintCi",""});
-            put("real", new String[]{"RealCi",""});
-            put("rename", new String[]{"RenameCi",""});
-            put("readf", new String[]{"ReadCi",""});
-            put("writef", new String[]{"WriteCi",""});
-            put("xscale", new String[]{"XscaleCi",""});
+            put("bode", new String[] { "BodeCi", "" });
+            put("display", new String[] { "DisplayCi", "" });
+            put("imaginary", new String[] { "ImagCi", "" });
+            put("info", new String[] { "InfoCi", "" });
+            put("list", new String[] { "ListCi", "" });
+            put("print", new String[] { "PrintCi", "" });
+            put("real", new String[] { "RealCi", "" });
+            put("rename", new String[] { "RenameCi", "" });
+            put("readf", new String[] { "ReadCi", "" });
+            put("writef", new String[] { "WriteCi", "" });
+            put("xscale", new String[] { "XscaleCi", "" });
         }
     };
 
@@ -104,7 +104,10 @@ public class PlotCommands {
             cp.println("Illegal scale value 0.0");
             return null;
         }
-        signal.setHScale(hscale);
+        if (signal.getWindow().canRender(hscale))
+            signal.setHScale(hscale);
+        else
+            cp.println("Scale factor too high.");
         return signal;
     }
 
@@ -147,10 +150,10 @@ public class PlotCommands {
             cp.println("Signal " + newName + " already exists.");
             return null;
         }
-        
+
         signals.remove(signal.getName());
         signal.setName(newName);
-        signals.put(newName,signal);
+        signals.put(newName, signal);
         return signal;
     }
 
@@ -196,7 +199,7 @@ public class PlotCommands {
         if (command.equals("readf")) {
             return ReadCi(arguments);
         }
-        
+
         String signalname = cp.getString(arguments, "Signal", "");
         Signal signal = signals.get(signalname); /* Find the correct signal */
         if (signal == null) /* Signal does not exist */
