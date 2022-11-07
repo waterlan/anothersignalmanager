@@ -12,6 +12,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import signals.Signal;
 import signals.Windowing;
 
 public class WindowingDialog {
@@ -45,7 +46,7 @@ public class WindowingDialog {
 
         samplerateLabel = new Label("Sample rate (10 Hz):");
         samplerateText = new TextField();
-        samplerateText.setPromptText("5120");
+        samplerateText.setPromptText(Integer.toString(Signal.SAMPLE_RATE));
 
         GridPane grid = new GridPane();
         grid.setHgap(10.0);
