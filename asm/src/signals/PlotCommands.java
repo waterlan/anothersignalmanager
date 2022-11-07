@@ -18,17 +18,17 @@ public class PlotCommands {
 
     public static final Map<String, String[]> plotcommands = new HashMap<String, String[]>() {
         {
-            put("bode", new String[] { "BodeCi", "" });
-            put("display", new String[] { "DisplayCi", "" });
-            put("imaginary", new String[] { "ImagCi", "" });
-            put("info", new String[] { "InfoCi", "" });
+            put("bode", new String[] { "BodeCi", "<name> <channel> <record>" });
+            put("display", new String[] { "DisplayCi", "<name> <channel> <record>" });
+            put("imaginary", new String[] { "ImagCi", "<name> <channel> <record>" });
+            put("info", new String[] { "InfoCi", "<name>" });
             put("list", new String[] { "ListCi", "" });
-            put("print", new String[] { "PrintCi", "" });
-            put("real", new String[] { "RealCi", "" });
-            put("rename", new String[] { "RenameCi", "" });
-            put("readf", new String[] { "ReadCi", "" });
-            put("writef", new String[] { "WriteCi", "" });
-            put("xscale", new String[] { "XscaleCi", "" });
+            put("print", new String[] { "PrintCi", "<name> <channel> <record>" });
+            put("real", new String[] { "RealCi", "<name> <channel> <record>" });
+            put("rename", new String[] { "RenameCi", "<name> <new-name>" });
+            put("readf", new String[] { "ReadCi", "<file-name> <new-name>" });
+            put("writef", new String[] { "WriteCi", "<name> <file-name> <user-text> <description>" });
+            put("xscale", new String[] { "XscaleCi", "<name> <scale-factor>" });
         }
     };
 

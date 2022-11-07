@@ -15,8 +15,8 @@ public class ConvCorr extends MathBase {
 
     public static final Map<String, String[]> convcorr = new HashMap<String, String[]>() {
         {
-            put("convolution", new String[] { "ConvolutionCi", "" });
-            put("correlation", new String[] { "CorrelationCi", "" });
+            put("convolution", new String[] { "ConvolutionCi", "<input1> <input2> <output> <window>" });
+            put("correlation", new String[] { "CorrelationCi", "<input1> <input2> <output> <window>" });
         }
     };
 

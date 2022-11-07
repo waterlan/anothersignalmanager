@@ -16,11 +16,11 @@ public class Transformations extends MathBase {
 
     public static final Map<String, String[]> transformations = new HashMap<String, String[]>() {
         {
-            put("fft", new String[] { "FFTCi", "" });
-            put("ifft", new String[] { "IFFTCi", "" });
-            put("magnitude", new String[] { "MagnitudeCi", "" });
-            put("phase", new String[] { "PhaseCi", "" });
-            put("histogram", new String[] { "HistCi", "" });
+            put("fft", new String[] { "FFTCi", "<input> <output> <length> <window> <average-type>" });
+            put("ifft", new String[] { "IFFTCi", "<input> <output>" });
+            put("magnitude", new String[] { "MagnitudeCi", "<input> <output> <channel> <average-type> <log>" });
+            put("phase", new String[] { "PhaseCi", "<input> <output> <channel> <average-type>" });
+            put("histogram", new String[] { "HistCi", "<input> <output> <buckets>" });
         }
     };
 

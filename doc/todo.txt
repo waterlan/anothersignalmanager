@@ -89,4 +89,4 @@ sound.c
 
 Ander:
   v Magnitude draw: clip at -100 dB
-
+    copy histogram, wrong domain.

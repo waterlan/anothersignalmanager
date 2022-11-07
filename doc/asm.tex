@@ -135,6 +135,12 @@ Parameters are separated by spaces.
 If you don't give all the parameters that are possible on
 a certain command ASM will take default values.
 
+\paragraph{}
+A single question mark `\textbf{?}' (without quotes) or
+`\textbf{-h}' as argument will give a short help line.
+
+\paragraph{}
+A dot`\textbf{.}' as argument can be used to use the default value.
 
 \chapter{Functionality}
 
@@ -1084,7 +1090,7 @@ command: :  list
 \bc
 \begin{verbatim}
 command: : writef    signal,  filename  , usertext, description, bits-per-sample
-default  :              a  , signalname ,         ,            , bits-per-sample
+default  :              a  ,   a.asm    ,         ,            , bits-per-sample
 domain   : time, frequency, magnitude, phase, amplitude
 \end{verbatim}
 \ec
@@ -1094,8 +1100,30 @@ domain   : time, frequency, magnitude, phase, amplitude
 \bc
 \begin{verbatim}
 command: : readf   filename  , signalname
-default  :             a     ,  filename
+default  :           a.asm   , signalname-in-file
 domain   : time, frequency, magnitude, phase, amplitude
+\end{verbatim}
+\ec
+
+\paragraph{copy}: Copy a signal.
+
+\bc
+\begin{verbatim}
+command: : copy       Input-signal,  Output-signal
+default  :                 a      ,      copy
+range    :               <a-z>    ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
+\end{verbatim}
+\ec
+
+\paragraph{rename}: Rename a signal.
+
+\bc
+\begin{verbatim}
+command: : Rename     Input-signal,  Output-signal
+default  :                 a      ,        a
+range    :               <a-z>    ,      <a-z>
+domain   : time, frequency, amplitude, magnitude, phase
 \end{verbatim}
 \ec
 
@@ -1150,86 +1178,6 @@ domain   : frequency
 
 Clipping is done per record.
 
-\section{New functions}
-
-The functions listed in this section are new. They did not exist in
-the original RiscOS version of ASM.
-
-\paragraph{dosshell}: Start a system shell. Signals stay in memory.
-
-\paragraph{}
-This commands starts a system shell. The user can run some text commands in the
-shell.  When the user exits the shell, he/she comes back in ASM. This command
-has only use in the DOS operating system. In multi-tasking operating systems
-like Windows and Linux the shell immediately ends and the user goes direct
-back to ASM.
-
-\bc
-\begin{verbatim}
-command:  dosshell
-\end{verbatim}
-\ec
-
-\paragraph{bitmap}: Save the signal image in a bitmap file.
-
-\bc
-\begin{verbatim}
-command:  bitmap    signal ,   filename ,  <format>
-default:              a    ,      a     ,     1
-range:              <a-z>  ,            ,   <1-3>
-\end{verbatim}
-\ec
-
-
-format\\
-1 = pcx (Zsoft Paintbrush)\\
-2 = tga (Truevision Targa)\\
-3 = bmp (Windows Bitmap)
-
-\paragraph{signaldir}: Set the directory path where to store and read signals.
-
-\bc
-\begin{verbatim}
-command: signaldir  directory-path
-\end{verbatim}
-\ec
-
-\paragraph{samplerate}: Set the default samplerate.
-
-\bc
-\begin{verbatim}
-command: samplerate      samplerate 
-default:            the current samplerate
-\end{verbatim}
-\ec
-
-\paragraph{readwav}: Read a wav file.
-
-\bc
-\begin{verbatim}
-command:  readwav   filename     signalname 
-default:               a              a
-\end{verbatim}
-\ec
-
-Read a signal from a RIFF WAV file. Only 8 bit mono
-WAV files are supported.
-Note that reading large WAV files will cause memory problems.
-The data of 8 bit mono WAV files is of type 'unsigned char'.
-
-\paragraph{}
-The function does not check if the number of samples is
-a power of 2, nor does it chop the number of samples to a power of 2.
-Data is also not split in records. See \ref{sec:header}.
-This function needs to be improved.
-
-\paragraph{macro}: Run a macro.
-
-\bc
-\begin{verbatim}
-command: macro  macro-filename
-\end{verbatim}
-\ec
 
 \chapter{Data format}
 

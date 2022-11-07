@@ -12,13 +12,13 @@ public class Windowing extends SourcesBase {
 
     public static final Map<String, String[]> windows = new HashMap<String, String[]>() {
         {
-            put("wblackman", new String[] {"",""});
-            put("wblock", new String[] {"",""});
-            put("wgauss", new String[] {"",""});
-            put("whanning", new String[] {"",""});
-            put("whamming", new String[] {"",""});
-            put("wkaiser", new String[] {"",""});
-            put("wtriangle", new String[] {"",""});
+            put("wblackman", new String[] { "", "<name> <elements> <samplerate>" });
+            put("wblock", new String[] { "", "<name> <elements> <samplerate>" });
+            put("wgauss", new String[] { "", "<name> <elements> <samplerate>" });
+            put("whanning", new String[] { "", "<name> <elements> <samplerate>" });
+            put("whamming", new String[] { "", "<name> <elements> <samplerate>" });
+            put("wkaiser", new String[] { "", "<name> <elements> <samplerate>" });
+            put("wtriangle", new String[] { "", "<name> <elements> <samplerate>" });
         }
     };
 

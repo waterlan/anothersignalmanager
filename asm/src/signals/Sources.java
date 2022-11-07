@@ -16,18 +16,23 @@ public class Sources extends SourcesBase {
     private static final int RAND_MAX = 0x7fff;
     public static final Map<String, String[]> functions = new HashMap<String, String[]>() {
         {
-            put("fconstant", new String[] { "FconstCi", "" });
-            put("fcosine", new String[] { "FcosineCi", "" });
-            put("fdelta", new String[] { "FdeltaCi", "" });
-            put("fexp", new String[] { "FexpCi", "" });
-            put("fnoise", new String[] { "FnoiseCi", "" });
-            put("framp", new String[] { "FrampCi", "" });
-            put("fsinc", new String[] { "FsinecCi", "" });
+            put("fconstant", new String[] { "FconstCi", "<name> <amplitude> <type> <elements> <samplerate>" });
+            put("fcosine", new String[] { "FcosineCi",
+                    "<name> <offset> <amplitude> <freq> <phase> <type> <elements> <samplerate>" });
+            put("fdelta", new String[] { "FdeltaCi", "<name> <amplitude> <td(ms)> <type> <elements> <samplerate>" });
+            put("fexp", new String[] { "FexpCi", "<name> <amplitude> <t63.2(ms)> <type> <elements> <samplerate>" });
+            put("fnoise", new String[] { "FnoiseCi", "<name> <amplitude> <type> <seed> <elements> <samplerate>" });
+            put("framp", new String[] { "FrampCi", "<name> <offset> <amplitude> <type> <elements> <samplerate>" });
+            put("fsinc",
+                    new String[] { "FsinecCi", "<name> <offset> <amplitude> <freq> <type> <elements> <samplerate>" });
             put("fsine", new String[] { "FsineCi",
-                    "fsine <name> <offset> <amplitude> <freq> <phase> <type> <elements> <samplerate>" });
-            put("fsquare", new String[] { "FsquarewaveCi", "" });
-            put("fstep", new String[] { "FstepCi", "" });
-            put("ftriangle", new String[] { "FtriangleCi", "" });
+                    "<name> <offset> <amplitude> <freq> <phase> <type> <elements> <samplerate>" });
+            put("fsquare", new String[] { "FsquarewaveCi",
+                    "<name> <offset> <amplitude> <freq> <duty-cycle> <type> <elements> <samplerate>" });
+            put("fstep", new String[] { "FstepCi",
+                    "<name> <offset> <amplitude> <tdelay(ms)> <type> <elements> <samplerate>" });
+            put("ftriangle", new String[] { "FtriangleCi",
+                    "<name> <offset> <amplitude> <freq> <phi0> <type> <elements> <samplerate>" });
         }
     };
 

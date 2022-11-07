@@ -53,7 +53,7 @@ public class Commands {
 
     public String getHelp(String command) {
         if (commands.containsKey(command))
-            return commands.get(command)[1];
+            return command + " " + commands.get(command)[1];
         else
             return null;
     }

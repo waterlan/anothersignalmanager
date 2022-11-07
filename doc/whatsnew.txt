@@ -5,6 +5,8 @@ Upcoming Version 2.0.0-beta1
    - Signal window has scroll bars.
    - Zoom in is limited to avoid rendering issues.
    - Text area of Console windows grows with window in vertical direction.
+   - All commands give a short help text if you give argument ? or -h.
+   - Documented commands 'copy' and 'rename'.
 
 Oct 21 2022: Version 2.0.0-alpha1
 
