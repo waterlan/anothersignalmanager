@@ -233,6 +233,7 @@ public class Calculations extends MathBase {
         }
         outputSignal.setRealData(re_out);
         outputSignal.setImagData(im_out);
+        copySignalValues(outputSignal, signal);
     }
 
     public void inv(Signal signal, Signal outputSignal) {

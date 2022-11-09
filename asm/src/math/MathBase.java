@@ -14,23 +14,32 @@ public class MathBase {
         this.cp = cp;
     }
 
-    protected void setSignalValues(Signal outPutSignal, Signal inputSignal) {
-        outPutSignal.setDate();
-        outPutSignal.setPixelFormat(Signal.DATA_PIXEL_FORMAT);
-        outPutSignal.setDataLength(inputSignal.getDataLength());
-        outPutSignal.setDataRecords(inputSignal.getDataRecords());
-        outPutSignal.setDataFileSeq(Signal.DATA_FILE_SEQ);
-        outPutSignal.setDataBitsPerSample(Signal.BPS_SAMPLE);
-        outPutSignal.setDataChannels(inputSignal.getDataChannels());
-        outPutSignal.setDataSampleRate(inputSignal.getDataSampleRate());
-        outPutSignal.setDataDomain(Signal.TIME);
-        outPutSignal.setDataType(inputSignal.getDataType());
-        outPutSignal.setDataIdString(Signal.ASM_ID_STRING);
-        outPutSignal.setDataUserText("DataUserText");
-        outPutSignal.setDataDescription(inputSignal.getDataDescription());
-        outPutSignal.setMode(inputSignal.getMode());
-        outPutSignal.setRecord(inputSignal.getRecord());
-        outPutSignal.setChannel(inputSignal.getChannel());
-        outPutSignal.setHScale(inputSignal.getHScale());
+    protected void setSignalValues(Signal outputSignal, Signal inputSignal) {
+        outputSignal.setDate();
+        outputSignal.setPixelFormat(Signal.DATA_PIXEL_FORMAT);
+        outputSignal.setDataLength(inputSignal.getDataLength());
+        outputSignal.setDataRecords(inputSignal.getDataRecords());
+        outputSignal.setDataFileSeq(Signal.DATA_FILE_SEQ);
+        outputSignal.setDataBitsPerSample(Signal.BPS_SAMPLE);
+        outputSignal.setDataChannels(inputSignal.getDataChannels());
+        outputSignal.setDataSampleRate(inputSignal.getDataSampleRate());
+        outputSignal.setDataDomain(Signal.TIME);
+        outputSignal.setDataType(inputSignal.getDataType());
+        outputSignal.setDataIdString(Signal.ASM_ID_STRING);
+        outputSignal.setDataUserText("DataUserText");
+        outputSignal.setDataDescription(inputSignal.getDataDescription());
+        outputSignal.setMode(inputSignal.getMode());
+        outputSignal.setRecord(inputSignal.getRecord());
+        outputSignal.setChannel(inputSignal.getChannel());
+        outputSignal.setHScale(inputSignal.getHScale());
+    }
+
+    protected void copySignalValues(Signal outputSignal, Signal inputSignal) {
+        outputSignal.setPixelFormat(inputSignal.getPixelFormat());
+        outputSignal.setDataFileSeq(inputSignal.getDataFileSeq());
+        outputSignal.setDataBitsPerSample(inputSignal.getDataBitsPerSample());
+        outputSignal.setDataDomain(inputSignal.getDataDomain());
+        outputSignal.setDataIdString(inputSignal.getDataIdString());
+        outputSignal.setDataUserText(inputSignal.getDataUserText());
     }
 }

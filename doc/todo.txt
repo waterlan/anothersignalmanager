@@ -1,60 +1,3 @@
-sources.c DONE
-	v int FnoiseCi(char *p)
-	v int FsineCi (char *s)
-	v int FsinecCi(char *p)
-	v int FcosineCi(char *p)
-	v int FexpCi(char *p)
-	v int FsquarewaveCi(char *p)
-	v int FtriangleCi(char *p)
-	v int FconstCi(char *p)
-	v int FstepCi(char *p)
-	v int FdeltaCi(char *p)
-	v int FrampCi(char *p)
-	v int WhanningCi(char *p)
-	v int WhammingCi(char *p)
-	v int WgaussCi(char *p)
-	v int WblackmanCi(char *p)
-	v int WkaiserCi(char *p)
-	v int WtriangleCi(char *p)
-	v wblock()    extra
-
-calculat.c
-	v int ClearCi(char *p)
-	v int AssignCi(char *p)
-	v int CmultiplyCi(char *p)
-	v int CdivideCi(char *p)
-	v int CabsCi(char *p)
-	v int CaddCi(char *p)
-	v int InvCi(char *p)
-	v int ConjugateCi(char *p)
-	v int AddCi(char *p)
-	v int SubCi(char *p)
-	v int MultiplyCi(char *p)
-	v int DivideCi(char *p)
-	v int AbsoluteCi(char *p)
-	v int LnCi(char *p)
-	v int LogCi(char *p)
-	v int EpowCi(char *p)
-	v int TenpowCi(char *p)
-	v int SineCi(char *p)
-	v int CosineCi(char *p)
-	v int MinimumCi(char *p)
-	v int MaximumCi(char *p)
-	v int ZeropadCi(char *p)
-	v int ShiftCi(char *p)
-	v int RotateCi(char *p)
-	v int ClipCi(char *p)
-
-transfor.c
-	v int FFTCi(char *p)
-	v int IFFTCi(char *p)
-	v int MagnitudeCi (char *p)
-	v int PhaseCi (char *p)
-
-convcorr.c
-  v ConvolutionCi
-  V CorrelationCi
-
 commnd1.c
   v QuitCi
   v ListComCi
@@ -68,25 +11,20 @@ commnd1.c
     MacroCi       New
     DosshellCi    New
 
-plotcomm.c
-  v XscaleCi
-  v CopyCi
-  v ImagCi
-  v RealCi
-  v BodeCi
-  v DoffCi
-  v DonCi
-  v BoffCi
-  v BonCi
-  v DisplayCi
-  v InfoCi
-  v PrintCi
-  v ListCi
-
 sound.c
     ReadWav.Ci   New
 
 
 Ander:
-  v Magnitude draw: clip at -100 dB
-    copy histogram, wrong domain.
+* copy histogram, wrong domain.
+* save and open magnitude/phase/histogram signals
+* save an open dialogs, grow fields
+* improve dialogs with combo boxes
+* check signal sizes
+ 
+Later
+* filter inputs based on domain in dialogs
+* draw complex, real and imaginary in one graph
+* zoom with mouse wheel
+* record sound
+* open sound files 

@@ -98,9 +98,6 @@ public class SignalWindow {
         // Add buttons to the ToolBar
         toolBar.getItems().add(zoomInButton);
         toolBar.getItems().add(zoomOutButton);
-        if (signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ) {
-            toolBar.getItems().add(viewMode);
-        }
         viewMode.setOnAction(e -> {
             if (viewModeReact) {
                 if (viewMode.getValue().equals("real")) {
@@ -119,7 +116,6 @@ public class SignalWindow {
         });
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         screenWidth = (int) screenBounds.getWidth();
-        System.out.println("screen width " + screenWidth);
 
         double sceneWidth = getCanvasWidth() > screenWidth * 0.8 ? screenWidth * 0.8 : getCanvasWidth();
         // TODO : get actual height of menu bar.
@@ -152,6 +148,10 @@ public class SignalWindow {
         }
         if (signal.getDataDomain() == Signal.FREQ) {
             viewMode.getItems().add("bode");
+        }
+        toolBar.getItems().remove(viewMode);
+        if (signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ) {
+            toolBar.getItems().add(viewMode);
         }
 
         String mode;
