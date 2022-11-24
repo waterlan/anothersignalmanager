@@ -15,8 +15,7 @@ sound.c
     ReadWav.Ci   New
 
 
-Ander:
-* save and open magnitude/phase/histogram signals
+Other:
 * improve dialogs with combo boxes
 * check signal sizes
  

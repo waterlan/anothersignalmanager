@@ -226,6 +226,33 @@ public class Signal {
         return header.domain_id;
     }
 
+    public String getDataDomainToString() {
+
+        String domain;
+        switch (this.getDataDomain()) {
+
+        case Signal.TIME:
+            domain = "Time";
+            break;
+        case Signal.FREQ:
+            domain = "Frequency";
+            break;
+        case Signal.AMPL:
+            domain = "Amplitude";
+            break;
+        case Signal.MAGN:
+            domain = "Magnitude";
+            break;
+        case Signal.PHAS:
+            domain = "Phase";
+            break;
+        default:
+            domain = "unknown";
+            break;
+        }
+        return domain;
+    }
+
     public short getDataFileSeq() {
         return header.file_seq;
     }
@@ -503,6 +530,26 @@ public class Signal {
             if (this.getDataType() == IMAG) {
                 double[] real_data = new double[length];
                 this.setRealData(real_data);
+            }
+
+            switch (this.getDataDomain()) {
+            case Signal.TIME:
+                this.setMode(Signal.REAL_M);
+                break;
+            case Signal.FREQ:
+                this.setMode(Signal.BODE_M);
+                break;
+            case Signal.AMPL:
+                this.setMode(Signal.HIST_M);
+                break;
+            case Signal.MAGN:
+                this.setMode(Signal.MAGN_M);
+                break;
+            case Signal.PHAS:
+                this.setMode(Signal.PHAS_M);
+                break;
+            default:
+                break;
             }
         }
     }

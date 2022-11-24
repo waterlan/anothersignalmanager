@@ -121,7 +121,7 @@ public class PlotCommands {
         cp.println(String.format("Fileseq. Nr.       : %d", signal.getDataFileSeq()));
         cp.println(String.format("Bits per sample    : %d", signal.getDataBitsPerSample()));
         cp.println(String.format("Samplerate         : %d", signal.getDataSampleRate()));
-        cp.println(String.format("Domain             : %d", signal.getDataDomain()));
+        cp.println(String.format("Domain             : %s", signal.getDataDomainToString()));
         cp.println(String.format("Type               : %s", signal.getDataTypeToString()));
         cp.println(String.format("ASM-Id String      : %s", signal.getDataIdString()));
         cp.println(String.format("Signal-Name        : %s", signal.getName()));
@@ -172,9 +172,6 @@ public class PlotCommands {
         signal.read(path);
         if (!signalName.isEmpty()) {
             signal.setName(signalName);
-        }
-        if (signal.getDataDomain() == Signal.FREQ) {
-            signal.setMode(Signal.BODE_M);
         }
 
         Signal signalSameName = signals.get(signal.getName());
