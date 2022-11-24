@@ -15,6 +15,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import signals.Signal;
@@ -49,10 +50,11 @@ public class SaveSignalDialog {
 
         outputFileLabel = new Label("output file:");
         outputFileText = new TextField();
+        String path = parser.getSignalDirectory() + System.getProperty("file.separator");
         if (signalName != null)
-            outputFileText.setText(signalName + ".asm");
+            outputFileText.setText(path + signalName + ".asm");
         else
-            outputFileText.setPromptText("a.asm");
+            outputFileText.setPromptText(path + "a.asm");
 
         userTextLabel = new Label("user text:");
         userText = new TextField();
@@ -76,6 +78,10 @@ public class SaveSignalDialog {
         grid.add(userText, 1, 2);
         grid.add(descriptionLabel, 0, 3);
         grid.add(descriptionText, 1, 3);
+
+        GridPane.setHgrow(outputFileText, Priority.ALWAYS);
+        grid.setPrefWidth(600);
+        
         dialog.getDialogPane().setContent(grid);
 
         fileChooser.setTitle("Save Signal File");

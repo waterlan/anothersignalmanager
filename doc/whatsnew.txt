@@ -7,6 +7,7 @@ Upcoming Version 2.0.0-beta1
    - Text area of Console windows grows with window in vertical direction.
    - All commands give a short help text if you give argument ? or -h.
    - Documented commands 'copy' and 'rename'.
+   - Added command 'signaldir' to set directory where to open and save signals.
 
 Oct 21 2022: Version 2.0.0-alpha1
 

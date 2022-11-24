@@ -7,18 +7,16 @@ commnd1.c
   v RenameCi
     BitmapCi      New
     SamplerateCi  New
-    SignaldirCi   New
+  v SignaldirCi   New
     MacroCi       New
-    DosshellCi    New
+  X DosshellCi    New
 
 sound.c
     ReadWav.Ci   New
 
 
 Ander:
-* copy histogram, wrong domain.
 * save and open magnitude/phase/histogram signals
-* save an open dialogs, grow fields
 * improve dialogs with combo boxes
 * check signal sizes
  

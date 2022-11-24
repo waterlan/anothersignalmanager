@@ -3,6 +3,7 @@ package signals;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class PlotCommands {
             put("real", new String[] { "RealCi", "<name> <channel> <record>" });
             put("rename", new String[] { "RenameCi", "<name> <new-name>" });
             put("readf", new String[] { "ReadCi", "<file-name> <new-name>" });
+            put("signaldir", new String[] { "SignaldirCi", "<directory-name>" });
             put("writef", new String[] { "WriteCi", "<name> <file-name> <user-text> <description>" });
             put("xscale", new String[] { "XscaleCi", "<name> <scale-factor>" });
         }
@@ -160,7 +162,12 @@ public class PlotCommands {
     public Signal ReadCi(List<String> arguments) throws IOException {
         String fileName = cp.getString(arguments, "file name", "");
         String signalName = cp.getString(arguments, "signal name", "");
+
         Path path = Paths.get(fileName);
+        if (path.normalize().getParent() == null) {
+            // Just a file name. Add signal directory.
+            path = Paths.get(cp.getSignalDirectory() + System.getProperty("file.separator") + path);
+        }
         Signal signal = new Signal("readf");
         signal.read(path);
         if (!signalName.isEmpty()) {
@@ -185,6 +192,10 @@ public class PlotCommands {
         String userText = cp.getString(arguments, "user text", "");
         String description = cp.getString(arguments, "description", "");
         Path path = Paths.get(fileName);
+        if (path.normalize().getParent() == null) {
+            // Just a file name. Add signal directory.
+            path = Paths.get(cp.getSignalDirectory() + System.getProperty("file.separator") + path);
+        }
         if (!userText.isEmpty())
             signal.setDataUserText(userText);
         if (!description.isEmpty())
@@ -194,10 +205,28 @@ public class PlotCommands {
         return signal;
     }
 
+    public Signal SignaldirCi(List<String> arguments) throws IOException {
+        String dirName = cp.getString(arguments, "directory name", "");
+
+        if (!dirName.isEmpty()) {
+            Path path = Paths.get(dirName);
+            if (Files.isDirectory(path)) {
+                cp.setSignalDirectory(path.toFile());
+            } else {
+                cp.println("Path " + path + " is not a directory.");
+            }
+        }
+        cp.println("Signaldir is " + cp.getSignalDirectory());
+        return null;
+    }
+
     public Signal PlotCommandsCi(List<String> arguments, String command) throws SignalDoesNotExist, IOException {
 
         if (command.equals("readf")) {
             return ReadCi(arguments);
+        }
+        if (command.equals("signaldir")) {
+            return SignaldirCi(arguments);
         }
 
         String signalname = cp.getString(arguments, "Signal", "");

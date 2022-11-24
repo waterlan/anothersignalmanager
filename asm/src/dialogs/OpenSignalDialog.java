@@ -12,6 +12,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -48,6 +49,10 @@ public class OpenSignalDialog {
         grid.add(browseButton, 2, 0);
         grid.add(signalNameLabel, 0, 1);
         grid.add(signalNameText, 1, 1);
+
+        GridPane.setHgrow(inputFileText, Priority.ALWAYS);
+        grid.setPrefWidth(600);
+
         dialog.getDialogPane().setContent(grid);
 
         fileChooser.setTitle("Open Signal File");
