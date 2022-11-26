@@ -9,6 +9,7 @@ import java.util.Map;
 
 import console.CommandLineParser;
 import exceptions.SignalDoesNotExist;
+import exceptions.WrongDomain;
 import signals.Signal;
 import signals.Windowing;
 
@@ -71,7 +72,7 @@ public class Transformations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal FFTCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal FFTCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -80,9 +81,8 @@ public class Transformations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.TIME) {
-            // TODO domain error
-            cp.println("domain error");
-            return null;
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
         }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
@@ -126,7 +126,7 @@ public class Transformations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal IFFTCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal IFFTCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -135,9 +135,8 @@ public class Transformations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.FREQ) {
-            // TODO domain error
-            cp.println("domain error");
-            return null;
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
         }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
@@ -223,7 +222,7 @@ public class Transformations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal MagnitudeCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal MagnitudeCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -232,9 +231,8 @@ public class Transformations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.FREQ) {
-            // TODO domain error
-            cp.println("domain error");
-            return null;
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
         }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
@@ -332,7 +330,7 @@ public class Transformations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal PhaseCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal PhaseCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -341,10 +339,9 @@ public class Transformations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.FREQ) {
-            // TODO domain error
-            cp.println("domain error");
-            return null;
-        }
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
+           }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
         Signal outputSignal = signals.get(outputSignalName);
@@ -447,7 +444,7 @@ public class Transformations extends MathBase {
         }
     }
 
-    public Signal HistCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal HistCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -456,10 +453,9 @@ public class Transformations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.TIME) {
-            // TODO domain error
-            cp.println("domain error");
-            return null;
-        }
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
+      }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
         Signal outputSignal = signals.get(outputSignalName);
@@ -477,7 +473,7 @@ public class Transformations extends MathBase {
         return outputSignal;
     }
 
-    public Signal TransformationCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal TransformationCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         Signal outputSignal = null;
 
         Method method = null;
@@ -500,6 +496,8 @@ public class Transformations extends MathBase {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof SignalDoesNotExist)
                 throw new SignalDoesNotExist(e.getCause());
+            else if (e.getCause() instanceof WrongDomain)
+                throw new WrongDomain(e.getCause());
             else
                 e.printStackTrace();
         }

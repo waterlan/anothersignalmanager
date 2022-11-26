@@ -151,7 +151,7 @@ public class Signal {
     }
 
     /**
-     *
+     * The number of samples per record.
      * 
      * @return The number of samples per record.
      */
@@ -261,6 +261,12 @@ public class Signal {
         return header.bits_p_samp;
     }
 
+    /**
+     * Get the number of channels.
+     * 
+     * @return the number of channels.
+     */
+    
     public int getDataChannels() {
         return header.n_channels;
     }
@@ -309,6 +315,12 @@ public class Signal {
         return this.channel_nr;
     }
 
+    /**
+     * Get the number of records.
+     * 
+     * @return the number of records.
+     */
+    
     public int getDataRecords() {
         return header.n_records;
     }
@@ -552,5 +564,10 @@ public class Signal {
                 break;
             }
         }
+    }
+
+    public boolean equalSize(Signal s) {
+        return s.getDataLength() == this.getDataLength() && s.getDataRecords() == this.getDataRecords()
+                && s.getDataChannels() == this.getDataChannels();
     }
 }

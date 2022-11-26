@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import console.CommandLineParser;
+import exceptions.IncompatibleSignals;
 import exceptions.SignalDoesNotExist;
+import exceptions.WrongDomain;
 import signals.Signal;
-import signals.Sources;
 
 public class Calculations extends MathBase {
     public static final Map<String, String[]> calculations = new HashMap<String, String[]>() {
@@ -58,14 +59,13 @@ public class Calculations extends MathBase {
         }
     }
 
-    public Signal clear(List<String> arguments, String command) {
+    public Signal clear(List<String> arguments, String command) throws SignalDoesNotExist {
         String signalname = cp.getString(arguments, "Signal", command);
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
         if (signal == null) /* Signal does not exist */
         {
-            // TODO: Throw signal not found.
-            return null;
+            throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         clear(signal);
         return signal;
@@ -82,7 +82,7 @@ public class Calculations extends MathBase {
         }
     }
 
-    public Signal assign(List<String> arguments, String command) {
+    public Signal assign(List<String> arguments, String command) throws SignalDoesNotExist {
         String signalname = cp.getString(arguments, "Signal", command);
         double realValue = cp.getDouble(arguments, "Real part", Integer.MIN_VALUE, Integer.MAX_VALUE, 1.0);
         double imagValue = cp.getDouble(arguments, "Imag part", Integer.MIN_VALUE, Integer.MAX_VALUE, 1.0);
@@ -90,8 +90,7 @@ public class Calculations extends MathBase {
         Signal signal = signals.get(signalname); /* Find the correct signal */
         if (signal == null) /* Signal does not exist */
         {
-            // TODO: Throw signal not found.
-            return null;
+            throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
 
         if (signal.getDataType() == Signal.REAL)
@@ -192,7 +191,6 @@ public class Calculations extends MathBase {
 
     public void cosine(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -207,7 +205,6 @@ public class Calculations extends MathBase {
 
     public void epow(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -253,7 +250,6 @@ public class Calculations extends MathBase {
 
     public void ln(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -268,7 +264,6 @@ public class Calculations extends MathBase {
 
     public void log(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -283,7 +278,6 @@ public class Calculations extends MathBase {
 
     public void sine(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -298,7 +292,6 @@ public class Calculations extends MathBase {
 
     public void tenpow(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
-        double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
@@ -332,7 +325,7 @@ public class Calculations extends MathBase {
         outputSignal.setDataLength((short) (2 * signal.getDataLength()));
     }
 
-    public Signal oneInputOneOutputCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal oneInputOneOutputCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
@@ -342,9 +335,8 @@ public class Calculations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (command.equals("zeropad") && signal.getDataDomain() != Signal.TIME) {
-            // TODO domain error
-            System.out.println("domain error");
-            return null;
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
         }
 
         Signal outputSignal = signals.get(outputSignalName);
@@ -557,7 +549,6 @@ public class Calculations extends MathBase {
         double[] im = signal.getImagData();
         int dataLength = signal.getDataLength();
         int length = signal.getDataChannels() * signal.getDataRecords() * dataLength;
-        int channelLength = signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
 
@@ -590,7 +581,6 @@ public class Calculations extends MathBase {
         double[] im = signal.getImagData();
         int dataLength = signal.getDataLength();
         int length = signal.getDataChannels() * signal.getDataRecords() * dataLength;
-        int channelLength = signal.getDataRecords() * signal.getDataLength();
         double[] re_out = new double[length];
         double[] im_out = new double[length];
 
@@ -621,7 +611,7 @@ public class Calculations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal clip(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal clip(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
         String signalname = cp.getString(arguments, "Signal", "a");
 
         Signal signal = signals.get(signalname); /* Find the correct signal */
@@ -630,9 +620,8 @@ public class Calculations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
         if (signal.getDataDomain() != Signal.TIME && signal.getDataDomain() != Signal.FREQ) {
-            // TODO domain error
-            System.out.println("domain error");
-            return null;
+            throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
+                    signalname, signal.getDataDomainToString()));
         }
         int left = 0, right = signal.getDataLength();
         double leftfreq = 1.0, rightfreq = (signal.getDataSampleRate() / 2) * 10;
@@ -783,7 +772,8 @@ public class Calculations extends MathBase {
         outputSignal.setImagData(im_out);
     }
 
-    public Signal twoInputsOneOutputCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal twoInputsOneOutputCi(List<String> arguments, String command)
+            throws SignalDoesNotExist, IncompatibleSignals {
         String signalname1 = cp.getString(arguments, "Signal", "a");
         String signalname2 = cp.getString(arguments, "Signal", "b");
         String outputSignalName = cp.getString(arguments, "Signal", command);
@@ -799,7 +789,12 @@ public class Calculations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname2 + "\" does not exist.");
         }
         if (signal1.getDataDomain() != signal2.getDataDomain()) {
-            return null;
+            throw new IncompatibleSignals(
+                    String.format("Signal \"%s\" and \"%s\" have different domain.", signalname1, signalname2));
+        }
+        if (!signal1.equalSize(signal2)) {
+            throw new IncompatibleSignals(
+                    String.format("Signal \"%s\" and \"%s\" have different size.", signalname1, signalname2));
         }
         if (signal1.getDataLength() != signal2.getDataLength() || signal1.getDataRecords() != signal2.getDataRecords()
                 || signal1.getDataChannels() != signal2.getDataChannels()) {
@@ -839,7 +834,8 @@ public class Calculations extends MathBase {
         return outputSignal;
     }
 
-    public Signal CalculateCi(List<String> arguments, String command) throws SignalDoesNotExist {
+    public Signal CalculateCi(List<String> arguments, String command)
+            throws SignalDoesNotExist, IncompatibleSignals, WrongDomain {
         Signal outputSignal = null;
 
         Method method = null;
@@ -862,6 +858,10 @@ public class Calculations extends MathBase {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof SignalDoesNotExist)
                 throw new SignalDoesNotExist(e.getCause());
+            else if (e.getCause() instanceof IncompatibleSignals)
+                throw new IncompatibleSignals(e.getCause());
+            else if (e.getCause() instanceof WrongDomain)
+                throw new WrongDomain(e.getCause());
             else
                 e.printStackTrace();
         }

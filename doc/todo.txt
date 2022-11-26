@@ -16,7 +16,6 @@ sound.c
 
 
 Other:
-* check signal sizes
  
 Later
 * filter inputs based on domain in dialogs
