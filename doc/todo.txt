@@ -16,7 +16,6 @@ sound.c
 
 
 Other:
-* improve dialogs with combo boxes
 * check signal sizes
  
 Later

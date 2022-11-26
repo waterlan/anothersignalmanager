@@ -44,6 +44,7 @@ public class SignalWindow {
     private final MenuBar menuBar = new MenuBar();
     private final ToolBar toolBar = new ToolBar();
     private final ComboBox<String> viewMode = new ComboBox<String>();
+    private final ComboBox<String> scaleMode = new ComboBox<String>();
     private final ScrollPane scrollPane = new ScrollPane();
     private boolean viewModeReact = true;
     private final Canvas canvas;
@@ -105,6 +106,8 @@ public class SignalWindow {
         toolBar.getItems().add(zoomOutButton);
         toolBar.getItems().add(zoomOneButton);
         viewMode.setOnAction(e -> {
+            // viewMode combobox is changed every show().
+            // To avoid a circular call of show() we check viewModeReact.
             if (viewModeReact) {
                 if (viewMode.getValue().equals("real")) {
                     signal.setMode(Signal.REAL_M);
@@ -118,6 +121,23 @@ public class SignalWindow {
                     signal.setMode(Signal.BODE_M);
                     this.show(bon);
                 }
+            }
+        });
+        scaleMode.getItems().add("linear");
+        scaleMode.getItems().add("logarithmic");
+        if (signal.getLog() == 0) {
+            scaleMode.getSelectionModel().select("linear");
+        } else {
+            scaleMode.getSelectionModel().select("logarithmic");
+        }
+        scaleMode.setOnAction(e -> {
+            if (scaleMode.getValue().equals("linear")) {
+                signal.setLog(0);
+                this.show(bon);
+            }
+            if (scaleMode.getValue().equals("logarithmic")) {
+                signal.setLog(1);
+                this.show(bon);
             }
         });
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -144,6 +164,8 @@ public class SignalWindow {
     public void show(boolean bon) {
         this.bon = bon;
 
+        // An existing signal can be overwritten by another one.
+        // Therefore we need to recreate the viewMode combo each time.
         viewModeReact = false;
         viewMode.getItems().clear();
         if (signal.getDataType() == Signal.REAL || signal.getDataType() == Signal.COMP) {
@@ -158,6 +180,10 @@ public class SignalWindow {
         toolBar.getItems().remove(viewMode);
         if (signal.getDataDomain() == Signal.TIME || signal.getDataDomain() == Signal.FREQ) {
             toolBar.getItems().add(viewMode);
+        }
+        toolBar.getItems().remove(scaleMode);
+        if (signal.getDataDomain() == Signal.MAGN) {
+            toolBar.getItems().add(scaleMode);
         }
 
         String mode;
