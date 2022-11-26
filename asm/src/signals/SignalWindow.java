@@ -82,6 +82,7 @@ public class SignalWindow {
 
         Button zoomInButton = new Button("+");
         Button zoomOutButton = new Button("-");
+        Button zoomOneButton = new Button("=");
 
         zoomInButton.setOnAction(event -> {
             double hscale = s.getHScale() / 0.9;
@@ -94,10 +95,15 @@ public class SignalWindow {
             s.setHScale(s.getHScale() * 0.9);
             this.show(bon);
         });
+        zoomOneButton.setOnAction(event -> {
+            s.setHScale(1.0);
+            this.show(bon);
+        });
 
         // Add buttons to the ToolBar
         toolBar.getItems().add(zoomInButton);
         toolBar.getItems().add(zoomOutButton);
+        toolBar.getItems().add(zoomOneButton);
         viewMode.setOnAction(e -> {
             if (viewModeReact) {
                 if (viewMode.getValue().equals("real")) {

@@ -73,11 +73,13 @@ public class CommandLineParser {
                 result = defaultValue;
             }
             args.remove(0);
-            if (result < min)
+            if (result < min) {
+                console.println(String.format("Value %d for %s too low, using %d", result, name, min));
                 return min;
-            else if (result > max)
+            } else if (result > max) {
+                console.println(String.format("Value %d for %s too high, using %d", result, name, max));
                 return max;
-            else
+            } else
                 return result;
         }
     }
@@ -97,11 +99,13 @@ public class CommandLineParser {
                 result = defaultValue;
             }
             args.remove(0);
-            if (result < min)
+            if (result < min) {
+                console.println(String.format("Value %f for %s too low, using %f", result, name, min));
                 return min;
-            else if (result > max)
+            } else if (result > max) {
+                console.println(String.format("Value %f for %s too low, using %f", result, name, min));
                 return max;
-            else
+            } else
                 return result;
         }
     }

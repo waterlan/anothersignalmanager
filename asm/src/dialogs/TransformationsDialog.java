@@ -18,18 +18,20 @@ import signals.Signal;
 
 public class TransformationsDialog {
 
-    private final Label valueLabel;
-    private final TextField valueText;
-    private final Label value2Label;
-    private final TextField value2Text;
-    private final Label value3Label;
-    private final TextField value3Text;
+    private final Label lengthLabel;
+    private final TextField lengthText;
+    private final Label channelLabel;
+    private final TextField channelText;
+    private final Label averageTypeLabel;
+    private final Label logLabel;
     private final Label outputSignalLabel;
     private final TextField outputSignalText;
     private final Label windowTypeLabel;
     private final ComboBox<String> windowType;
     private final Label bucketsLabel;
     private final ComboBox<String> buckets;
+    private final ComboBox<String> averageType;
+    private final ComboBox<String> log;
 
     public TransformationsDialog(CommandLineParser parser, Map<String, Signal> signals) {
         Dialog<List<String>> dialog = new Dialog<List<String>>();
@@ -54,21 +56,17 @@ public class TransformationsDialog {
             inputSignals.getItems().add(s);
         }
 
-        valueLabel = new Label("constant:");
-        valueText = new TextField();
-        valueText.setPromptText("0");
+        lengthLabel = new Label("length (2^n):");
+        lengthText = new TextField();
+        lengthText.setPromptText("0");
 
-        value2Label = new Label("right:");
-        value2Text = new TextField();
-        value2Text.setPromptText("");
-
-        value3Label = new Label("attenuation:");
-        value3Text = new TextField();
-        value3Text.setPromptText("50.0");
+        channelLabel = new Label("channel:");
+        channelText = new TextField();
+        channelText.setPromptText("0");
 
         outputSignalLabel = new Label("output signal:");
         outputSignalText = new TextField();
-        outputSignalText.setPromptText("b");
+        outputSignalText.setPromptText(functions.getValue());
 
         windowTypeLabel = new Label("window type:");
         windowType = new ComboBox<String>();
@@ -90,6 +88,18 @@ public class TransformationsDialog {
         buckets.getItems().add("11");
         buckets.getItems().add("12");
         buckets.getSelectionModel().select("9");
+
+        averageTypeLabel = new Label("average type:");
+        averageType = new ComboBox<String>();
+        averageType.getItems().add("0");
+        averageType.getItems().add("1");
+        averageType.getSelectionModel().select("0");
+
+        logLabel = new Label("log:");
+        log = new ComboBox<String>();
+        log.getItems().add("0");
+        log.getItems().add("1");
+        log.getSelectionModel().select("0");
 
         GridPane grid = new GridPane();
         grid.setHgap(10.0);
@@ -121,18 +131,19 @@ public class TransformationsDialog {
                 l.add(functionType);
                 l.add((String) inputSignals.getValue());
                 l.add(outputSignalText.getText());
-                if (!functionType.equals("ifft")) {
-                    l.add(valueText.getText());
-                }
                 if (functionType.equals("fft")) {
+                    l.add(lengthText.getText());
                     l.add(Integer.toString(windowType.getSelectionModel().getSelectedIndex()));
 
                 }
-                if (functionType.equals("fft") || functionType.equals("magnitude") || functionType.equals("phase")) {
-                    l.add(value2Text.getText());
+                if (functionType.equals("magnitude") || functionType.equals("phase")) {
+                    l.add(channelText.getText());
                 }
-                if (functionType.equals("fft") || functionType.equals("magnitude")) {
-                    l.add(value3Text.getText());
+                if (functionType.equals("fft") || functionType.equals("magnitude") || functionType.equals("phase")) {
+                    l.add(averageType.getValue());
+                }
+                if (functionType.equals("magnitude")) {
+                    l.add(log.getValue());
                 }
                 if (functionType.equals("histogram")) {
                     l.add(buckets.getValue());
@@ -152,35 +163,27 @@ public class TransformationsDialog {
         grid.add(outputSignalLabel, 0, r);
         grid.add(outputSignalText, 1, r++);
         if (func.equals("fft")) {
-            valueLabel.setText("length:");
-            grid.add(valueLabel, 0, r);
-            grid.add(valueText, 1, r++);
-            valueText.setPromptText("9");
+            grid.add(lengthLabel, 0, r);
+            grid.add(lengthText, 1, r++);
+            lengthText.setPromptText("9");
 
             grid.add(windowTypeLabel, 0, r);
             grid.add(windowType, 1, r++);
 
-            value3Label.setText("average type:");
-            grid.add(value3Label, 0, r);
-            grid.add(value3Text, 1, r++);
-            value3Text.setPromptText("0");
+            grid.add(averageTypeLabel, 0, r);
+            grid.add(averageType, 1, r++);
         }
         if (func.equals("magnitude") || func.equals("phase")) {
-            valueLabel.setText("channel:");
-            grid.add(valueLabel, 0, r);
-            grid.add(valueText, 1, r++);
-            valueText.setPromptText("0");
+            grid.add(channelLabel, 0, r);
+            grid.add(channelText, 1, r++);
+            channelText.setPromptText("0");
 
-            value2Label.setText("average type:");
-            grid.add(value2Label, 0, r);
-            grid.add(value2Text, 1, r++);
-            value2Text.setPromptText("0");
+            grid.add(averageTypeLabel, 0, r);
+            grid.add(averageType, 1, r++);
         }
         if (func.equals("magnitude")) {
-            value3Label.setText("log:");
-            grid.add(value3Label, 0, r);
-            grid.add(value3Text, 1, r++);
-            value3Text.setPromptText("0");
+            grid.add(logLabel, 0, r);
+            grid.add(log, 1, r++);
         }
         if (func.equals("histogram")) {
             grid.add(bucketsLabel, 0, r);

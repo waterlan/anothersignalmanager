@@ -46,7 +46,7 @@ public class Transformations extends MathBase {
         if (fft_length > signal.getDataLength())
             fft_length = signal.getDataLength();
         int records_out = ((signal.getDataLength() * signal.getDataRecords()) / fft_length);
-        // cp.println("fft_length = " + fft_length);
+        cp.println("fft length = " + fft_length);
         // cp.println("records_out = " + records_out);
         double[] re_out = new double[dataLength];
         double[] im_out = new double[dataLength];

@@ -143,7 +143,7 @@ public class CalculationDialog {
 
         outputSignalLabel = new Label("output signal:");
         outputSignalText = new TextField();
-        outputSignalText.setPromptText("b");
+        outputSignalText.setPromptText((String) functions.getValue());
 
         GridPane grid = new GridPane();
         grid.setHgap(10.0);

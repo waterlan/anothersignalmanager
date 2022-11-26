@@ -36,7 +36,7 @@ public class SourceDialog {
     private final Label datatypeLabel;
     private final ComboBox<String> datatype;
     private final Label nrOfElementsLabel;
-    private final TextField nrOfElementsText;
+    private final ComboBox<String> nrOfElementsComboBox;
     private final Label samplerateLabel;
     private final TextField samplerateText;
     private final Label seedLabel;
@@ -100,8 +100,15 @@ public class SourceDialog {
         datatype.getSelectionModel().select("real");
 
         nrOfElementsLabel = new Label("Nr of elements (2^n):");
-        nrOfElementsText = new TextField();
-        nrOfElementsText.setPromptText("9");
+        nrOfElementsComboBox = new ComboBox<String>();
+        nrOfElementsComboBox.getItems().add("7");
+        nrOfElementsComboBox.getItems().add("8");
+        nrOfElementsComboBox.getItems().add("9");
+        nrOfElementsComboBox.getItems().add("10");
+        nrOfElementsComboBox.getItems().add("11");
+        nrOfElementsComboBox.getItems().add("12");
+        nrOfElementsComboBox.getSelectionModel().select("9");
+
 
         samplerateLabel = new Label("Sample rate (10 Hz):");
         samplerateText = new TextField();
@@ -168,7 +175,7 @@ public class SourceDialog {
                 if (functionType.equals("noise")) {
                     l.add(seedText.getText());
                 }
-                l.add(nrOfElementsText.getText());
+                l.add(nrOfElementsComboBox.getValue());
                 l.add(samplerateText.getText());
                 return l;
             }
@@ -220,7 +227,7 @@ public class SourceDialog {
             grid.add(seedText, 1, r++);
         }
         grid.add(nrOfElementsLabel, 0, r);
-        grid.add(nrOfElementsText, 1, r++);
+        grid.add(nrOfElementsComboBox, 1, r++);
         grid.add(samplerateLabel, 0, r);
         grid.add(samplerateText, 1, r++);
     }

@@ -56,7 +56,7 @@ public class OperationsDialog {
 
         outputSignalLabel = new Label("output signal:");
         outputSignalText = new TextField();
-        outputSignalText.setPromptText("b");
+        outputSignalText.setPromptText(functions.getValue());
 
         windowTypeLabel = new Label("window type:");
         windowType = new ComboBox<String>();
