@@ -24,10 +24,12 @@ public class CalculationDialog {
     private final ComboBox<String> input2Signals = new ComboBox<String>();
     private final Label valueLabel;
     private final TextField valueText;
-    private final Label value2Label;
-    private final TextField value2Text;
-    private final Label value3Label;
-    private final TextField value3Text;
+    private final Label leftLabel;
+    private final TextField leftText;
+    private final Label rightLabel;
+    private final TextField rightText;
+    private final Label attenuationLabel;
+    private final TextField attenuationText;
     private final Label valueRealLabel;
     private final TextField valueRealText;
     private final Label valueImagLabel;
@@ -125,13 +127,17 @@ public class CalculationDialog {
         valueText = new TextField();
         valueText.setPromptText("0");
 
-        value2Label = new Label("right:");
-        value2Text = new TextField();
-        value2Text.setPromptText("");
+        leftLabel = new Label("left:");
+        leftText = new TextField();
+        leftText.setPromptText("0");
 
-        value3Label = new Label("attenuation:");
-        value3Text = new TextField();
-        value3Text.setPromptText("50.0");
+        rightLabel = new Label("right:");
+        rightText = new TextField();
+        rightText.setPromptText("");
+
+        attenuationLabel = new Label("attenuation:");
+        attenuationText = new TextField();
+        attenuationText.setPromptText("50.0");
 
         valueRealLabel = new Label("real value:");
         valueRealText = new TextField();
@@ -182,9 +188,9 @@ public class CalculationDialog {
                     l.add(valueImagText.getText());
                 }
                 if (functionType.equals("clip")) {
-                    l.add(valueText.getText());
-                    l.add(value2Text.getText());
-                    l.add(value3Text.getText());
+                    l.add(leftText.getText());
+                    l.add(rightText.getText());
+                    l.add(attenuationText.getText());
                 }
                 if (twoInputsOneOutput.contains(functionType) ||
                     twoInputsOneValueOneOutput.contains(functionType)) {
@@ -218,14 +224,12 @@ public class CalculationDialog {
                 valueText.setPromptText("1");
         }
         if (func.equals("clip")) {
-            valueLabel.setText("left:");
-            grid.add(valueLabel, 0, r);
-            grid.add(valueText, 1, r++);
-            valueText.setPromptText("0");
-            grid.add(value2Label, 0, r);
-            grid.add(value2Text, 1, r++);
-            grid.add(value3Label, 0, r);
-            grid.add(value3Text, 1, r++);
+            grid.add(leftLabel, 0, r);
+            grid.add(leftText, 1, r++);
+            grid.add(rightLabel, 0, r);
+            grid.add(rightText, 1, r++);
+            grid.add(attenuationLabel, 0, r);
+            grid.add(attenuationText, 1, r++);
         }
         if (oneInputTwoValuesSameOutput.contains(func)) {
             grid.add(valueRealLabel, 0, r);

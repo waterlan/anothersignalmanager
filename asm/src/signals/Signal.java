@@ -266,7 +266,7 @@ public class Signal {
      * 
      * @return the number of channels.
      */
-    
+
     public int getDataChannels() {
         return header.n_channels;
     }
@@ -320,7 +320,7 @@ public class Signal {
      * 
      * @return the number of records.
      */
-    
+
     public int getDataRecords() {
         return header.n_records;
     }
@@ -500,6 +500,10 @@ public class Signal {
     }
 
     public void read(Path outputFile) throws IOException {
+
+        if (Files.notExists(outputFile)) {
+            throw new IOException("error: File " + outputFile + " does not exist.");
+        }
 
         try (InputStream is = Files.newInputStream(outputFile); DataInputStream in = new DataInputStream(is)) {
             this.setPixelFormat(in.readShort());

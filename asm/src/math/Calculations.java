@@ -23,7 +23,7 @@ public class Calculations extends MathBase {
             put("cdivide", new String[] { "oneInputOneValueOneOutputCi", "<input> <constant> <output>" });
             put("clear", new String[] { "clear", "<input>" });
             put("clip", new String[] { "clip",
-                    "<input> <left> <right> <output> (time)\nclip <input> <left> <right> <attenuation> <output> (freq)" });
+                    "<input> <left> <right> <output> (time)\nclip <input> <left freq> <right freq> <attenuation> <output> (freq)" });
             put("cmultiply", new String[] { "oneInputOneValueOneOutputCi", "<input> <constant> <output>" });
             put("conjugate", new String[] { "oneInputOneOutputCi", "<input> <output>" });
             put("copy", new String[] { "oneInputOneOutputCi", "<input> <output>" });
@@ -653,6 +653,7 @@ public class Calculations extends MathBase {
 
         if (signal.getDataDomain() == Signal.FREQ) {
             clip(signal, leftfreq, rightfreq, attenuation, outputSignal);
+            outputSignal.setDataDomain(Signal.FREQ);
         } else {
             clip(signal, left, right, outputSignal);
         }
