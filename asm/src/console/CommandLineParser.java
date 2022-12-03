@@ -182,7 +182,7 @@ public class CommandLineParser {
             return 0;
         } else if (cmdMatches.size() == 1)
             command = cmdMatches.get(0);
-        if (!argList.isEmpty() && argList.get(0) != null && argList.get(0).matches("^\\?$|-h|--help")) {
+        if (!argList.isEmpty() && argList.get(0) != null && argList.get(0).matches("^/?\\?$|-h$|--help$")) {
             String help = commands.getHelp(command);
             if (help != null) {
                 println(help);

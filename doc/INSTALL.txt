@@ -1,0 +1,42 @@
+
+ASM requires minimal Java 11 Runtime Environment (JRE) and
+JavaFX 11.
+
+
+Windows
+=======
+
+The ASM package for Windows includes JRE 11 and the JavaFX 11 pacakge.
+
+Unpack the ASM zip file for Windows.
+Start asm.bat to start ASM.
+
+
+Linux
+=====
+
+The ASM pacakge for Linux includes the JavaFX 11 package. Your Linux
+needs to have Java 11 or higher installed.
+
+Unpack the ASM tar.gz file for Linux.
+Start asm.sh to start ASM.
+
+
+Other
+=====
+
+Java can be downloaded at https://openjdk.org/install/
+Another website that has many prebuilt Java SDK and JRE packages
+is https://adoptium.net/
+
+
+You can download JavaFX from https://gluonhq.com/products/javafx/
+Select "Include older versions" to be able to download older versions.
+
+
+The command to start ASM is:
+
+  java --module-path <JAVAFX>/lib --add-modules="javafx.controls" -jar asm.jar
+
+<JAVAFX> is the path to the JavaFX installation.
+

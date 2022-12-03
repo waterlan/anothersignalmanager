@@ -3,6 +3,7 @@ package console;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import dialogs.AboutDialog;
 import dialogs.CalculationDialog;
 import dialogs.OpenSignalDialog;
 import dialogs.OperationsDialog;
@@ -76,9 +77,18 @@ public class Console {
         menuOtherOperations.setOnAction(e -> {
             new OperationsDialog(parser, signals);
         });
-        
+
+        Menu menuHelp = new Menu("Help");
+        MenuItem menuAbout = new MenuItem("About");
+        menuHelp.getItems().add(menuAbout);
+
+        menuAbout.setOnAction(e -> {
+            new AboutDialog();
+        });
+
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuCommands);
+        menuBar.getMenus().add(menuHelp);
         
         
         consoleText.setEditable(false);

@@ -15,11 +15,13 @@ sound.c
     ReadWav.Ci   New
 
 
-Other:
  
-Later
 * filter inputs based on domain in dialogs
 * draw complex, real and imaginary in one graph
 * zoom with mouse wheel
 * record sound
 * open sound files 
+* improve manual
+* improve the signal plots
+* support multiple records and channels
+

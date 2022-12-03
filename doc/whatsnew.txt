@@ -1,20 +1,25 @@
-Upcoming Version 2.0.0-beta1
+Dec 3 2022: Version 2.0.0
+
+   ASM Java version is now more or less in the same state as the
+   original C version on RISC-OS, with the addition of menus and
+   dialogs for most of the commands and several bugs fixed.
 
    - Signal window has a tool bar with zoom buttons, and a combo box
      to set the view mode.
    - Signal window has scroll bars.
-   - Zoom in is limited to avoid rendering issues.
+   - Zoom-in is limited to avoid rendering issues.
    - Text area of Console windows grows with window in vertical direction.
    - All commands give a short help text if you give argument ? or -h.
    - Documented commands 'copy' and 'rename'.
    - Added command 'signaldir' to set directory where to open and save signals.
    - Fixed reading magnitude/phase/histogram signals from file.
 
+
 Oct 21 2022: Version 2.0.0-alpha1
 
    - Rewrote ASM in Java using JavaFX graphics.
    - Each signal is shown in its own window.
-   - Menus and dialogs for each command.
+   - Menus and dialogs for most of the commands.
    - Fixed bode magnitude plot for very low values. Plot is cut at -100 dB.
 
 
