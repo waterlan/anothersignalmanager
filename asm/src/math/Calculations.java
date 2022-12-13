@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import console.CommandLineParser;
-import exceptions.IncompatibleSignals;
+import exceptions.IncompatibleData;
 import exceptions.SignalDoesNotExist;
 import exceptions.WrongDomain;
 import signals.Signal;
@@ -774,7 +774,7 @@ public class Calculations extends MathBase {
     }
 
     public Signal twoInputsOneOutputCi(List<String> arguments, String command)
-            throws SignalDoesNotExist, IncompatibleSignals {
+            throws SignalDoesNotExist, IncompatibleData {
         String signalname1 = cp.getString(arguments, "Signal", "a");
         String signalname2 = cp.getString(arguments, "Signal", "b");
         String outputSignalName = cp.getString(arguments, "Signal", command);
@@ -790,11 +790,11 @@ public class Calculations extends MathBase {
             throw new SignalDoesNotExist("Signal \"" + signalname2 + "\" does not exist.");
         }
         if (signal1.getDataDomain() != signal2.getDataDomain()) {
-            throw new IncompatibleSignals(
+            throw new IncompatibleData(
                     String.format("Signal \"%s\" and \"%s\" have different domain.", signalname1, signalname2));
         }
         if (!signal1.equalSize(signal2)) {
-            throw new IncompatibleSignals(
+            throw new IncompatibleData(
                     String.format("Signal \"%s\" and \"%s\" have different size.", signalname1, signalname2));
         }
         if (signal1.getDataLength() != signal2.getDataLength() || signal1.getDataRecords() != signal2.getDataRecords()
@@ -836,7 +836,7 @@ public class Calculations extends MathBase {
     }
 
     public Signal CalculateCi(List<String> arguments, String command)
-            throws SignalDoesNotExist, IncompatibleSignals, WrongDomain {
+            throws SignalDoesNotExist, IncompatibleData, WrongDomain {
         Signal outputSignal = null;
 
         Method method = null;
@@ -859,8 +859,8 @@ public class Calculations extends MathBase {
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof SignalDoesNotExist)
                 throw new SignalDoesNotExist(e.getCause());
-            else if (e.getCause() instanceof IncompatibleSignals)
-                throw new IncompatibleSignals(e.getCause());
+            else if (e.getCause() instanceof IncompatibleData)
+                throw new IncompatibleData(e.getCause());
             else if (e.getCause() instanceof WrongDomain)
                 throw new WrongDomain(e.getCause());
             else

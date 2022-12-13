@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import exceptions.IncompatibleSignals;
+import exceptions.IncompatibleData;
 import exceptions.SignalDoesNotExist;
 import exceptions.WrongDomain;
 import math.Calculations;
@@ -238,7 +238,7 @@ public class CommandLineParser {
             println("error: " + e.getMessage());
         } catch (IOException e) {
             println("error: " + e.getMessage());
-        } catch (IncompatibleSignals e) {
+        } catch (IncompatibleData e) {
             println("error: " + e.getMessage());
         } catch (WrongDomain e) {
             println("error: " + e.getMessage());
