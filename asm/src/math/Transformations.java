@@ -95,7 +95,7 @@ public class Transformations extends MathBase {
         setSignalValues(outputSignal, signal);
 
         int l_max = (int) (Math.log10(signal.getDataLength()) / Math.log10(2.0));
-        int length = cp.getInt(arguments, "Size (2^n)", Signal.MIN_N, l_max, l_max);
+        int length = cp.getInt(arguments, "Length (2^n)", Signal.MIN_N, l_max, l_max);
         int windowing = cp.getInt(arguments, "Window type", 0, 6, 1);
         int mid_type = cp.getInt(arguments, "Average type", 0, 1, 0);
         fft(signal, length, windowing, mid_type, outputSignal);

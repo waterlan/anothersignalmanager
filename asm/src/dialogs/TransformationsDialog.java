@@ -19,7 +19,7 @@ import signals.Signal;
 public class TransformationsDialog {
 
     private final Label lengthLabel;
-    private final TextField lengthText;
+    private final ComboBox<String> length;
     private final Label channelLabel;
     private final TextField channelText;
     private final Label averageTypeLabel;
@@ -57,8 +57,14 @@ public class TransformationsDialog {
         }
 
         lengthLabel = new Label("length (2^n):");
-        lengthText = new TextField();
-        lengthText.setPromptText("0");
+        length = new ComboBox<String>();
+        length.getItems().add("7");
+        length.getItems().add("8");
+        length.getItems().add("9");
+        length.getItems().add("10");
+        length.getItems().add("11");
+        length.getItems().add("12");
+        length.getSelectionModel().select("9");
 
         channelLabel = new Label("channel:");
         channelText = new TextField();
@@ -79,7 +85,7 @@ public class TransformationsDialog {
         windowType.getItems().add("triangle");
         windowType.getSelectionModel().select("hanning");
 
-        bucketsLabel = new Label("buckets:");
+        bucketsLabel = new Label("buckets (2^n):");
         buckets = new ComboBox<String>();
         buckets.getItems().add("7");
         buckets.getItems().add("8");
@@ -132,7 +138,7 @@ public class TransformationsDialog {
                 l.add((String) inputSignals.getValue());
                 l.add(outputSignalText.getText());
                 if (functionType.equals("fft")) {
-                    l.add(lengthText.getText());
+                    l.add(length.getValue());
                     l.add(Integer.toString(windowType.getSelectionModel().getSelectedIndex()));
 
                 }
@@ -164,8 +170,7 @@ public class TransformationsDialog {
         grid.add(outputSignalText, 1, r++);
         if (func.equals("fft")) {
             grid.add(lengthLabel, 0, r);
-            grid.add(lengthText, 1, r++);
-            lengthText.setPromptText("9");
+            grid.add(length, 1, r++);
 
             grid.add(windowTypeLabel, 0, r);
             grid.add(windowType, 1, r++);

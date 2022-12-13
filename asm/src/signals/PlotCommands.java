@@ -120,7 +120,7 @@ public class PlotCommands {
         cp.println(String.format("Number of Channels : %d", signal.getDataChannels()));
         cp.println(String.format("Fileseq. Nr.       : %d", signal.getDataFileSeq()));
         cp.println(String.format("Bits per sample    : %d", signal.getDataBitsPerSample()));
-        cp.println(String.format("Samplerate         : %d", signal.getDataSampleRate()));
+        cp.println(String.format("Samplerate         : %d (10 Hz)", signal.getDataSampleRate()));
         cp.println(String.format("Domain             : %s", signal.getDataDomainToString()));
         cp.println(String.format("Type               : %s", signal.getDataTypeToString()));
         cp.println(String.format("ASM-Id String      : %s", signal.getDataIdString()));
