@@ -8,6 +8,7 @@ import java.util.Map;
 
 import console.CommandLineParser;
 import exceptions.SignalDoesNotExist;
+import signals.ComplexArray;
 import signals.Signal;
 import signals.Windowing;
 
@@ -49,14 +50,12 @@ public class ConvCorr extends MathBase {
         double[] real_in2 = signal2.getRealData();
         double[] imag_in2 = signal2.getImagData();
         int alloc_size = 2 * real_in1.length;
-        double[] real_data_out = new double[alloc_size];
-        double[] imag_data_out = new double[alloc_size];
+        ComplexArray data_out = new ComplexArray(alloc_size);
 
         outputSignal.setDataType(Signal.COMP);
         outputSignal.setRecord(0);
         outputSignal.setChannel(0);
-        outputSignal.setRealData(real_data_out);
-        outputSignal.setImagData(imag_data_out);
+        outputSignal.setData(data_out);
         outputSignal.setDataLength(2 * signal1.getDataLength());
 
         int inputDataLength = signal1.getDataLength();
@@ -126,9 +125,9 @@ public class ConvCorr extends MathBase {
         }
 
         /* Put the data in out_im */
-        for (int i = 0; i < real_data_out.length; i++) {
-            real_data_out[i] = real_help1[i];
-            imag_data_out[i] = imag_help1[i];
+        for (int i = 0; i < data_out.length; i++) {
+            data_out.re[i] = real_help1[i];
+            data_out.im[i] = imag_help1[i];
         }
     }
 

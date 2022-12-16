@@ -11,6 +11,11 @@ import console.CommandLineParser;
 public class Windowing extends SourcesBase {
 
     public static final Map<String, String[]> windows = new HashMap<String, String[]>() {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -7725808670019627458L;
+
         {
             put("wblackman", new String[] { "", "<name> <elements> <samplerate>" });
             put("wblock", new String[] { "", "<name> <elements> <samplerate>" });
@@ -210,10 +215,8 @@ public class Windowing extends SourcesBase {
 
         setSignalValues(im, number, sample, Signal.COMP, window);
         im.setMode(Signal.REAL_M);
-        double[] data_real = new double[number];
-        double[] data_imag = new double[number];
-        im.setRealData(data_real);
-        im.setImagData(data_imag);
+        ComplexArray data = new ComplexArray(number);
+        im.setData(data);
 
         Method method = null;
         String methodName = window;

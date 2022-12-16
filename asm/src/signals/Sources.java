@@ -15,6 +15,11 @@ public class Sources extends SourcesBase {
     public static final double DEF_AMPL = 100.0; /* Default amplitude */
     private static final int RAND_MAX = 0x7fff;
     public static final Map<String, String[]> functions = new HashMap<String, String[]>() {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3798908816997123618L;
+
         {
             put("fconstant", new String[] { "FconstCi", "<name> <amplitude> <type> <elements> <samplerate>" });
             put("fcosine", new String[] { "FcosineCi",
@@ -45,10 +50,8 @@ public class Sources extends SourcesBase {
         int number = s.getDataLength();
         short dtype = s.getDataType();
         // Sources are always 1 channel, 1 record.
-        double[] real_data = new double[number];
-        double[] imag_data = new double[number];
-        s.setRealData(real_data);
-        s.setImagData(imag_data);
+        ComplexArray data = new ComplexArray(number);
+        s.setData(data);
 
         Method method = null;
         String methodName = s.getDataDescription();
@@ -71,20 +74,14 @@ public class Sources extends SourcesBase {
 
         switch (dtype) {
         case Signal.REAL: /* Real data */
-            for (int i = 0; i < number; i++) {
-                imag_data[i] = 0;
-            }
             s.setMode(Signal.REAL_M);
             break;
         case Signal.IMAG: /* Imaginary data */
-            for (int i = 0; i < number; i++) {
-                real_data[i] = 0;
-            }
             s.setMode(Signal.IMAG_M);
             break;
         case Signal.COMP: /* Complex data */
             for (int i = 0; i < number; i++) {
-                imag_data[i] = real_data[i];
+                data.im[i] = data.re[i];
             }
             s.setMode(Signal.REAL_M);
             break;
@@ -105,9 +102,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         constant(data, ampl);
     }
@@ -152,9 +149,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         delta(data, ampl, t0, sampleRate);
     }
@@ -200,9 +197,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         step(data, offs, ampl, t0, sampleRate);
     }
@@ -243,9 +240,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         noise(data, ampl, seed);
     }
@@ -285,9 +282,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         sine(data, offs, ampl, freq, phi0, sampleRate);
     }
@@ -337,9 +334,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         sinec(data, offs, ampl, freq, sampleRate);
     }
@@ -389,9 +386,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         cosine(data, offs, ampl, freq, phi0, sampleRate);
     }
@@ -446,9 +443,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         double T = (double) (1) / (double) (freq); /* period time */
         double rc = 4.0 * ampl * freq; /* slope */
@@ -497,9 +494,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         exp(data, ampl, T, sampleRate);
     }
@@ -554,9 +551,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         double T = (double) (1) / (double) (freq); /* period time */
         square(data, offs, ampl, dutyCycle, sampleRate, T);
@@ -603,9 +600,9 @@ public class Sources extends SourcesBase {
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
-            data = s.getImagData();
+            data = s.getData().im;
         else
-            data = s.getRealData();
+            data = s.getData().re;
 
         ramp(data, offs, ampl, sampleRate);
     }

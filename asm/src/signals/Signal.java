@@ -85,8 +85,7 @@ public class Signal {
         int n_records; /* Number of records */
         short domain_id; /* 0=time, 1=freq, 2=ampl, 3=magnitude, 4= fase */
         short datatype_id; /* 0=real, 1=imaginary, 2= complex */
-        double[] real_data; /* pointer to real data */
-        double[] imag_data; /* pointer to imaginary data */
+        ComplexArray data; /* pointer to real data */
         int sample_rate; /* Sample-rate in 10 Hz */
         short[] reserved; /* Reserved */
         double[] numerical;
@@ -275,12 +274,16 @@ public class Signal {
         return header.sample_rate;
     }
 
+    public ComplexArray getData() {
+        return header.data;
+    }
+
     public double[] getRealData() {
-        return header.real_data;
+        return header.data.re;
     }
 
     public double[] getImagData() {
-        return header.imag_data;
+        return header.data.im;
     }
 
     public double getMinimum() {
@@ -412,12 +415,8 @@ public class Signal {
         this.Mode = mode;
     }
 
-    public void setRealData(double[] data) {
-        header.real_data = data;
-    }
-
-    public void setImagData(double[] data) {
-        header.imag_data = data;
+    public void setData(ComplexArray data) {
+        header.data = data;
     }
 
     public void setWindowWidth(int width) {
@@ -486,13 +485,13 @@ public class Signal {
             out.write(header.date);
             out.write(header.description);
             if (this.getDataType() == REAL || this.getDataType() == COMP) {
-                for (int i = 0; i < header.real_data.length; i++) {
-                    out.writeDouble(header.real_data[i]);
+                for (int i = 0; i < header.data.length; i++) {
+                    out.writeDouble(header.data.re[i]);
                 }
             }
             if (this.getDataType() == IMAG || this.getDataType() == COMP) {
-                for (int i = 0; i < header.imag_data.length; i++) {
-                    out.writeDouble(header.imag_data[i]);
+                for (int i = 0; i < header.data.length; i++) {
+                    out.writeDouble(header.data.im[i]);
                 }
             }
             out.flush();
@@ -525,28 +524,18 @@ public class Signal {
             in.read(header.date);
             in.read(header.description);
             int length = this.getDataLength() * this.getDataRecords() * this.getDataChannels();
+            ComplexArray data = new ComplexArray(length);
             if (this.getDataType() == REAL || this.getDataType() == COMP) {
-                double[] real_data = new double[length];
                 for (int i = 0; i < length; i++) {
-                    real_data[i] = in.readDouble();
+                    data.re[i] = in.readDouble();
                 }
-                this.setRealData(real_data);
             }
             if (this.getDataType() == IMAG || this.getDataType() == COMP) {
-                double[] imag_data = new double[length];
                 for (int i = 0; i < length; i++) {
-                    imag_data[i] = in.readDouble();
+                    data.im[i] = in.readDouble();
                 }
-                this.setImagData(imag_data);
             }
-            if (this.getDataType() == REAL) {
-                double[] imag_data = new double[length];
-                this.setImagData(imag_data);
-            }
-            if (this.getDataType() == IMAG) {
-                double[] real_data = new double[length];
-                this.setRealData(real_data);
-            }
+            this.setData(data);
 
             switch (this.getDataDomain()) {
             case Signal.TIME:

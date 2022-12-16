@@ -10,10 +10,16 @@ import console.CommandLineParser;
 import exceptions.IncompatibleData;
 import exceptions.SignalDoesNotExist;
 import exceptions.WrongDomain;
+import signals.ComplexArray;
 import signals.Signal;
 
 public class Calculations extends MathBase {
     public static final Map<String, String[]> calculations = new HashMap<String, String[]>() {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6926951807167296484L;
+
         {
             put("absolute", new String[] { "twoInputsOneOutputCi", "<input1> <input2> <output>" });
             put("add", new String[] { "twoInputsOneOutputCi", "<input1> <input2> <output>" });
@@ -108,15 +114,13 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = (re1[i] * re2[i] - im1[i] * im2[i]) / constant;
-            im_out[i] = (re1[i] * im2[i] + im1[i] * re2[i]) / constant;
+            data.re[i] = (re1[i] * re2[i] - im1[i] * im2[i]) / constant;
+            data.im[i] = (re1[i] * im2[i] + im1[i] * re2[i]) / constant;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public Signal multiply(List<String> arguments, String command) throws SignalDoesNotExist {
@@ -163,73 +167,63 @@ public class Calculations extends MathBase {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.sqrt(Math.pow(re[i], 2.0) + Math.pow(im[i], 2.0));
-            im_out[i] = 0.0;
+            data.re[i] = Math.sqrt(Math.pow(re[i], 2.0) + Math.pow(im[i], 2.0));
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void conjugate(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i];
-            im_out[i] = -im[i];
+            data.re[i] = re[i];
+            data.im[i] = -im[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void cosine(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.cos(re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.cos(re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void epow(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.exp(re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.exp(re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void copy(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i];
-            im_out[i] = im[i];
+            data.re[i] = re[i];
+            data.im[i] = im[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
         copySignalValues(outputSignal, signal);
     }
 
@@ -237,71 +231,61 @@ public class Calculations extends MathBase {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = -re[i];
-            im_out[i] = -im[i];
+            data.re[i] = -re[i];
+            data.im[i] = -im[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void ln(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.log(re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.log(re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void log(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.log10(re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.log10(re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void sine(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.sin(re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.sin(re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void tenpow(Signal signal, Signal outputSignal) {
         double[] re = signal.getRealData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.pow(10.0, re[i]);
-            im_out[i] = 0.0;
+            data.re[i] = Math.pow(10.0, re[i]);
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void zeropad(Signal signal, Signal outputSignal) {
@@ -313,15 +297,13 @@ public class Calculations extends MathBase {
 
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
-        double[] re_out = new double[2 * length];
-        double[] im_out = new double[2 * length];
+        ComplexArray data = new ComplexArray(2*length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i];
-            im_out[i] = im[i];
+            data.re[i] = re[i];
+            data.im[i] = im[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
         outputSignal.setDataLength((short) (2 * signal.getDataLength()));
     }
 
@@ -372,45 +354,39 @@ public class Calculations extends MathBase {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i] + value;
-            im_out[i] = im[i];
+            data.re[i] = re[i] + value;
+            data.im[i] = im[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void cdivide(Signal signal, Signal outputSignal, double value) {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i] / value;
-            im_out[i] = im[i] / value;
+            data.re[i] = re[i] / value;
+            data.im[i] = im[i] / value;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void cmultiply(Signal signal, Signal outputSignal, double value) {
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
         int length = signal.getDataChannels() * signal.getDataRecords() * signal.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re[i] * value;
-            im_out[i] = im[i] * value;
+            data.re[i] = re[i] * value;
+            data.im[i] = im[i] * value;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void rotate(Signal signal, Signal outputSignal, double value) {
@@ -420,8 +396,8 @@ public class Calculations extends MathBase {
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         int rotate = (int) value;
         rotate = rotate % channelLength;
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         // Rotate per channel.
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
@@ -430,28 +406,26 @@ public class Calculations extends MathBase {
 
                 if (rotate >= 0) {
                     if (i < rotate) {
-                        re_out[i + chan_offset] = re[channelLength - rotate + i + chan_offset];
-                        im_out[i + chan_offset] = im[channelLength - rotate + i + chan_offset];
+                        data.re[i + chan_offset] = re[channelLength - rotate + i + chan_offset];
+                        data.im[i + chan_offset] = im[channelLength - rotate + i + chan_offset];
                     }
                     if (i >= rotate) {
-                        re_out[i + chan_offset] = re[i - rotate + chan_offset];
-                        im_out[i + chan_offset] = im[i - rotate + chan_offset];
+                        data.re[i + chan_offset] = re[i - rotate + chan_offset];
+                        data.im[i + chan_offset] = im[i - rotate + chan_offset];
                     }
                 }
                 if (rotate < 0) {
                     if (i >= channelLength + rotate) {
-                        re_out[i + chan_offset] = re[i - (channelLength + rotate) + chan_offset];
-                        im_out[i + chan_offset] = im[i - (channelLength + rotate) + chan_offset];
+                        data.re[i + chan_offset] = re[i - (channelLength + rotate) + chan_offset];
+                        data.im[i + chan_offset] = im[i - (channelLength + rotate) + chan_offset];
                     }
                     if (i < channelLength + rotate) {
-                        re_out[i + chan_offset] = re[i - rotate + chan_offset];
-                        im_out[i + chan_offset] = im[i - rotate + chan_offset];
+                        data.re[i + chan_offset] = re[i - rotate + chan_offset];
+                        data.im[i + chan_offset] = im[i - rotate + chan_offset];
                     }
                 }
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void shift(Signal signal, Signal outputSignal, double value) {
@@ -461,8 +435,8 @@ public class Calculations extends MathBase {
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         int shift = (int) value;
         shift = shift % channelLength;
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         // Shift per channel.
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
@@ -471,28 +445,26 @@ public class Calculations extends MathBase {
 
                 if (shift >= 0) {
                     if (i < shift) {
-                        re_out[i + chan_offset] = 0;
-                        im_out[i + chan_offset] = 0;
+                        data.re[i + chan_offset] = 0;
+                        data.im[i + chan_offset] = 0;
                     }
                     if (i >= shift) {
-                        re_out[i + chan_offset] = re[i - shift + chan_offset];
-                        im_out[i + chan_offset] = im[i - shift + chan_offset];
+                        data.re[i + chan_offset] = re[i - shift + chan_offset];
+                        data.im[i + chan_offset] = im[i - shift + chan_offset];
                     }
                 }
                 if (shift < 0) {
                     if (i >= channelLength + shift) {
-                        re_out[i + chan_offset] = 0;
-                        im_out[i + chan_offset] = 0;
+                        data.re[i + chan_offset] = 0;
+                        data.im[i + chan_offset] = 0;
                     }
                     if (i < channelLength + shift) {
-                        re_out[i + chan_offset] = re[i - shift + chan_offset];
-                        im_out[i + chan_offset] = im[i - shift + chan_offset];
+                        data.re[i + chan_offset] = re[i - shift + chan_offset];
+                        data.im[i + chan_offset] = im[i - shift + chan_offset];
                     }
                 }
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public Signal oneInputOneValueOneOutputCi(List<String> arguments, String command) throws SignalDoesNotExist {
@@ -549,8 +521,8 @@ public class Calculations extends MathBase {
         double[] im = signal.getImagData();
         int dataLength = signal.getDataLength();
         int length = signal.getDataChannels() * signal.getDataRecords() * dataLength;
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         // Clip per channel.
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
@@ -561,19 +533,17 @@ public class Calculations extends MathBase {
 
                     for (int i = 0; i < dataLength; i++) {
                         if ((i < left) || (i > right)) {
-                            re_out[i + offset] = 0.0;
-                            im_out[i + offset] = 0.0;
+                            data.re[i + offset] = 0.0;
+                            data.im[i + offset] = 0.0;
                         } else {
-                            re_out[i + offset] = re[i + offset];
-                            im_out[i + offset] = im[i + offset];
+                            data.re[i + offset] = re[i + offset];
+                            data.im[i + offset] = im[i + offset];
                         }
                     }
 
                 }
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void clip(Signal signal, double leftfreq, double rightfreq, double attenuation, Signal outputSignal) {
@@ -581,8 +551,8 @@ public class Calculations extends MathBase {
         double[] im = signal.getImagData();
         int dataLength = signal.getDataLength();
         int length = signal.getDataChannels() * signal.getDataRecords() * dataLength;
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         attenuation = Math.pow(10.0, attenuation / 10);
         int left = (int) ((leftfreq / (10.0 * (double) signal.getDataSampleRate())) * (double) dataLength);
@@ -598,17 +568,15 @@ public class Calculations extends MathBase {
                 for (int i = 0; i < dataLength; i++) {
                     if ((i < left) || ((i > right) && (i < (dataLength - right - 1)))
                             || (i > (dataLength - left - 1))) {
-                        re_out[i + offset] = re[i + offset] / attenuation;
-                        im_out[i + offset] = im[i + offset] / attenuation;
+                        data.re[i + offset] = re[i + offset] / attenuation;
+                        data.im[i + offset] = im[i + offset] / attenuation;
                     } else {
-                        re_out[i + offset] = re[i + offset];
-                        im_out[i + offset] = im[i + offset];
+                        data.re[i + offset] = re[i + offset];
+                        data.im[i + offset] = im[i + offset];
                     }
                 }
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public Signal clip(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
@@ -666,15 +634,13 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.sqrt(Math.pow(re1[i] - re2[i], 2.0) + Math.pow(im1[i] - im2[i], 2.0));
-            im_out[i] = 0.0;
+            data.re[i] = Math.sqrt(Math.pow(re1[i] - re2[i], 2.0) + Math.pow(im1[i] - im2[i], 2.0));
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void add(Signal signal1, Signal signal2, Signal outputSignal) {
@@ -683,15 +649,13 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re1[i] + re2[i];
-            im_out[i] = im1[i] + im2[i];
+            data.re[i] = re1[i] + re2[i];
+            data.im[i] = im1[i] + im2[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void divide(Signal signal1, Signal signal2, Signal outputSignal) {
@@ -700,16 +664,14 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = Math.sqrt(Math.pow(re1[i], 2.0) + Math.pow(im1[i], 2.0))
+            data.re[i] = Math.sqrt(Math.pow(re1[i], 2.0) + Math.pow(im1[i], 2.0))
                     / (1.0 + Math.sqrt(Math.pow(re2[i], 2.0) + Math.pow(im2[i], 2.0)));
-            im_out[i] = 0.0;
+            data.im[i] = 0.0;
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void maximum(Signal signal1, Signal signal2, Signal outputSignal) {
@@ -718,20 +680,18 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
             if ((Math.pow(re1[i], 2.0) + Math.pow(im1[i], 2.0)) >= (Math.pow(re2[i], 2.0) + Math.pow(im2[i], 2.0))) {
-                re_out[i] = re1[i];
-                im_out[i] = im1[i];
+                data.re[i] = re1[i];
+                data.im[i] = im1[i];
             } else {
-                re_out[i] = re2[i];
-                im_out[i] = im2[i];
+                data.re[i] = re2[i];
+                data.im[i] = im2[i];
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void minimum(Signal signal1, Signal signal2, Signal outputSignal) {
@@ -740,20 +700,18 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
             if ((Math.pow(re1[i], 2.0) + Math.pow(im1[i], 2.0)) < (Math.pow(re2[i], 2.0) + Math.pow(im2[i], 2.0))) {
-                re_out[i] = re1[i];
-                im_out[i] = im1[i];
+                data.re[i] = re1[i];
+                data.im[i] = im1[i];
             } else {
-                re_out[i] = re2[i];
-                im_out[i] = im2[i];
+                data.re[i] = re2[i];
+                data.im[i] = im2[i];
             }
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public void subtract(Signal signal1, Signal signal2, Signal outputSignal) {
@@ -762,15 +720,13 @@ public class Calculations extends MathBase {
         double[] re2 = signal2.getRealData();
         double[] im2 = signal2.getImagData();
         int length = signal1.getDataChannels() * signal1.getDataRecords() * signal1.getDataLength();
-        double[] re_out = new double[length];
-        double[] im_out = new double[length];
+        ComplexArray data = new ComplexArray(length);
+        outputSignal.setData(data);
 
         for (int i = 0; i < length; i++) {
-            re_out[i] = re1[i] - re2[i];
-            im_out[i] = im1[i] - im2[i];
+            data.re[i] = re1[i] - re2[i];
+            data.im[i] = im1[i] - im2[i];
         }
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
     }
 
     public Signal twoInputsOneOutputCi(List<String> arguments, String command)

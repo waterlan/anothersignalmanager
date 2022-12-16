@@ -10,12 +10,18 @@ import java.util.Map;
 import console.CommandLineParser;
 import exceptions.SignalDoesNotExist;
 import exceptions.WrongDomain;
+import signals.ComplexArray;
 import signals.Signal;
 import signals.Windowing;
 
 public class Transformations extends MathBase {
 
     public static final Map<String, String[]> transformations = new HashMap<String, String[]>() {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5132642404065300951L;
+
         {
             put("fft", new String[] { "FFTCi", "<input> <output> <length> <window> <average-type>" });
             put("ifft", new String[] { "IFFTCi", "<input> <output>" });
@@ -49,15 +55,14 @@ public class Transformations extends MathBase {
         int records_out = ((signal.getDataLength() * signal.getDataRecords()) / fft_length);
         cp.println("fft length = " + fft_length);
         // cp.println("records_out = " + records_out);
-        double[] re_out = new double[dataLength];
-        double[] im_out = new double[dataLength];
+        ComplexArray data_out = new ComplexArray(dataLength);
 
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
 
             for (int record = 0; record < records_out; record++) {
                 int offset = (channel * records_out + record) * fft_length;
-                Windowing.windowing(re, im, re_out, im_out, offset, fft_length, windowing);
-                fft(re_out, im_out, offset, fft_length, 1);
+                Windowing.windowing(re, im, data_out.re, data_out.im, offset, fft_length, windowing);
+                fft(data_out.re, data_out.im, offset, fft_length, 1);
             }
         }
         outputSignal.setDataRecords(records_out);
@@ -68,8 +73,7 @@ public class Transformations extends MathBase {
         outputSignal.setAverageType(mid_type);
         outputSignal.setRecord(0);
         outputSignal.setChannel(0);
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
+        outputSignal.setData(data_out);
     }
 
     public Signal FFTCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
@@ -107,14 +111,18 @@ public class Transformations extends MathBase {
         double[] im = signal.getImagData();
         int dataLength = signal.getDataLength();
         int totalLength = signal.getDataChannels() * signal.getDataRecords() * dataLength;
-        double[] re_out = new double[totalLength];
-        double[] im_out = new double[totalLength];
+        ComplexArray data_out = new ComplexArray(totalLength);
+
+        for (int i = 0; i < totalLength; ++i) {
+            data_out.re[i] = re[i];
+            data_out.im[i] = im[i];
+        }
 
         for (int channel = 0; channel < signal.getDataChannels(); channel++) {
 
             for (int record = 0; record < signal.getDataRecords(); record++) {
                 int offset = (channel * signal.getDataRecords() + record) * dataLength;
-                fft(re_out, im_out, offset, dataLength, -1);
+                fft(data_out.re, data_out.im, offset, dataLength, -1);
             }
         }
         outputSignal.setDataDomain(Signal.TIME);
@@ -122,8 +130,7 @@ public class Transformations extends MathBase {
         outputSignal.setMode(Signal.REAL_M);
         outputSignal.setRecord(0);
         outputSignal.setChannel(0);
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
+        outputSignal.setData(data_out);
     }
 
     public Signal IFFTCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
@@ -158,8 +165,7 @@ public class Transformations extends MathBase {
         int dataLength = signal.getDataLength();
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         // The output signals will have channels reduced to 1 record.
-        double[] re_out = new double[signal.getDataChannels() * signal.getDataLength()];
-        double[] im_out = new double[signal.getDataChannels() * signal.getDataLength()];
+        ComplexArray data_out = new ComplexArray(signal.getDataChannels() * signal.getDataLength());
 
         double[] cumulative1 = new double[signal.getDataLength()];
 
@@ -178,8 +184,8 @@ public class Transformations extends MathBase {
                     /* Divide the cumulative magnitudes by the number of records */
                     cumulative1[i] = cumulative1[i] / (double) signal.getDataRecords();
                     /* In the magnitude domain channels have always 1 record */
-                    re_out[i + channel * dataLength] = cumulative1[i];
-                    im_out[i + channel * dataLength] = 0.0;
+                    data_out.re[i + channel * dataLength] = cumulative1[i];
+                    data_out.im[i + channel * dataLength] = 0.0;
                     cumulative1[i] = 0.0; /* make empty for the next channel */
                 }
             }
@@ -204,8 +210,9 @@ public class Transformations extends MathBase {
 
                     /* Determine the magnitude */
                     /* In the magnitude domain channels have always 1 record */
-                    re_out[i + h * dataLength] = Math.sqrt(Math.pow(cumulative1[i], 2) + Math.pow(cumulative2[i], 2));
-                    im_out[i + h * dataLength] = 0.0;
+                    data_out.re[i + h * dataLength] = Math
+                            .sqrt(Math.pow(cumulative1[i], 2) + Math.pow(cumulative2[i], 2));
+                    data_out.im[i + h * dataLength] = 0.0;
 
                     cumulative1[i] = cumulative2[i] = 0.0; /* make empty for next channel */
                 }
@@ -218,8 +225,7 @@ public class Transformations extends MathBase {
         outputSignal.setRecord(0);
         outputSignal.setChannel(channel_nr);
         outputSignal.setLog(log);
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
+        outputSignal.setData(data_out);
     }
 
     public Signal MagnitudeCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
@@ -257,8 +263,7 @@ public class Transformations extends MathBase {
         int dataLength = signal.getDataLength();
         int channelLength = signal.getDataRecords() * signal.getDataLength();
         // The output signals will have channels reduced to 1 record.
-        double[] re_out = new double[signal.getDataChannels() * signal.getDataLength()];
-        double[] im_out = new double[signal.getDataChannels() * signal.getDataLength()];
+        ComplexArray data_out = new ComplexArray(signal.getDataChannels() * signal.getDataLength());
 
         double[] cumulative1 = new double[dataLength];
 
@@ -284,8 +289,8 @@ public class Transformations extends MathBase {
 
                 /* Divide the cumulative phase by the number of records */
                 for (int i = 0; i < dataLength; i++) {
-                    re_out[i + offset] = cumulative1[i] / (double) (signal.getDataRecords());
-                    im_out[i + offset] = 0.0;
+                    data_out.re[i + offset] = cumulative1[i] / (double) (signal.getDataRecords());
+                    data_out.im[i + offset] = 0.0;
                     cumulative1[i] = 0.0; /* leeg maken voor volgende channel */
                 }
             }
@@ -313,8 +318,8 @@ public class Transformations extends MathBase {
                     cumulative1[i] = cumulative1[i] / (double) (signal.getDataRecords());
                     cumulative2[i] = cumulative2[i] / (double) (signal.getDataRecords());
                     /* Determine the phase */
-                    re_out[i + offset] = (180 / Math.PI) * Math.atan2(cumulative2[i], cumulative1[i]);
-                    im_out[i + offset] = 0.0;
+                    data_out.re[i + offset] = (180 / Math.PI) * Math.atan2(cumulative2[i], cumulative1[i]);
+                    data_out.im[i + offset] = 0.0;
 
                     cumulative1[i] = cumulative2[i] = 0.0; /* make empty for next channel */
                 }
@@ -326,8 +331,7 @@ public class Transformations extends MathBase {
         outputSignal.setDataType(Signal.REAL);
         outputSignal.setRecord(0);
         outputSignal.setChannel(channel_nr);
-        outputSignal.setRealData(re_out);
-        outputSignal.setImagData(im_out);
+        outputSignal.setData(data_out);
     }
 
     public Signal PhaseCi(List<String> arguments, String command) throws SignalDoesNotExist, WrongDomain {
@@ -341,7 +345,7 @@ public class Transformations extends MathBase {
         if (signal.getDataDomain() != Signal.FREQ) {
             throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
                     signalname, signal.getDataDomainToString()));
-           }
+        }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
         Signal outputSignal = signals.get(outputSignalName);
@@ -373,13 +377,11 @@ public class Transformations extends MathBase {
 
         double[] re = signal.getRealData();
         double[] im = signal.getImagData();
-        double[] re_out = new double[alloc_size];
-        double[] im_out = new double[alloc_size];
+        ComplexArray data_out = new ComplexArray(alloc_size);
 
         double[] real_hulp = Arrays.copyOfRange(re, 0, re.length);
 
-        outputSignal.setRealData(re_out); /* Set the data pointers back */
-        outputSignal.setImagData(im_out);
+        outputSignal.setData(data_out); /* Set the data pointers back */
 
         outputSignal.setDataLength(buckets);
         outputSignal.setDataRecords(1);
@@ -417,8 +419,8 @@ public class Transformations extends MathBase {
 
             /* Make the elements of out_im 0 */
             for (int i = 0; i < (outputSignal.getDataRecords() * outputSignal.getDataLength()); i++) {
-                re_out[i + offset_out] = 0.0;
-                im_out[i + offset_out] = 0.0;
+                data_out.re[i + offset_out] = 0.0;
+                data_out.im[i + offset_out] = 0.0;
             }
 
             for (int i = 0; i < lengte; i++) {
@@ -439,7 +441,7 @@ public class Transformations extends MathBase {
                         bucket_found = true;
                     }
                 }
-                re_out[offset_out + bucket] = re_out[offset_out + bucket] + 1;
+                data_out.re[offset_out + bucket] = data_out.re[offset_out + bucket] + 1;
             }
         }
     }
@@ -455,7 +457,7 @@ public class Transformations extends MathBase {
         if (signal.getDataDomain() != Signal.TIME) {
             throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
                     signalname, signal.getDataDomainToString()));
-      }
+        }
         String outputSignalName = cp.getString(arguments, "Signal", command);
 
         Signal outputSignal = signals.get(outputSignalName);
