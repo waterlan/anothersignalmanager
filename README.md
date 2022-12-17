@@ -1,6 +1,6 @@
 # Another Signal Manager
 
-version 2.0.0 , Dec 3 2022
+version 2.0.1 , Dec 17 2022
 
 Java version
 
