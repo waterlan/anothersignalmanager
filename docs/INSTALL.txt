@@ -25,9 +25,7 @@ Start asm.sh to start ASM.
 Other
 =====
 
-Java can be downloaded at https://openjdk.org/install/
-Another website that has many prebuilt Java SDK and JRE packages
-is https://adoptium.net/
+Prebuilt Java SDK and JRE packages can be downloaded at https://adoptium.net/
 
 
 You can download JavaFX from https://gluonhq.com/products/javafx/
