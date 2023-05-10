@@ -31,7 +31,7 @@ public class CommandLineParser {
     private boolean don = true;
     private boolean bon = false;
     private File signalDirectory = new File(System.getProperty("user.home"));
-    Map<String, Signal> signals;
+    private final Map<String, Signal> signals;
 
     public CommandLineParser(Map<String, Signal> signals, Console console) {
         this.signals = signals;
@@ -42,6 +42,10 @@ public class CommandLineParser {
         this.plotCommands = new PlotCommands(signals, this);
         this.convcorr = new ConvCorr(signals, this);
         this.console = console;
+    }
+
+    public Map<String, Signal> getSignals() {
+        return signals;
     }
 
     public String getString(List<String> args, String name, String defaultValue) {
@@ -134,7 +138,7 @@ public class CommandLineParser {
             return;
         SignalWindow w = s.getWindow();
         if (w == null) {
-            w = new SignalWindow(s, this, signals);
+            w = new SignalWindow(s, this);
         } else {
             w.show(bon);
         }

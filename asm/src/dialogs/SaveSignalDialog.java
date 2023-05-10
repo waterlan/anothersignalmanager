@@ -32,7 +32,7 @@ public class SaveSignalDialog {
     private final Stage stage = new Stage();
     private final FileChooser fileChooser = new FileChooser();
 
-    public SaveSignalDialog(CommandLineParser parser, Map<String, Signal> signals, String signalName) {
+    public SaveSignalDialog(CommandLineParser parser, String signalName) {
         Dialog<List<String>> dialog = new Dialog<List<String>>();
         dialog.setTitle("Save signal");
         dialog.setResizable(true);
@@ -40,6 +40,7 @@ public class SaveSignalDialog {
         Label inputLabel = new Label("signal:");
         ComboBox<String> inputSignals = new ComboBox<String>();
 
+        Map<String, Signal> signals = parser.getSignals();
         List<String> signalList = new ArrayList<String>(signals.keySet()); // set -> list
         Collections.sort(signalList);
         for (String s : signalList) {
@@ -105,7 +106,7 @@ public class SaveSignalDialog {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
 
         inputSignals.setOnAction(e -> {
-            outputFileText.setText(inputSignals.getValue() + ".asm");
+            outputFileText.setText(path + inputSignals.getValue() + ".asm");
         });
 
         
