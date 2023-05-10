@@ -51,7 +51,7 @@ public class SignalWindow {
     VBox root = new VBox();
     Scene scene;
 
-    public SignalWindow(Signal s, CommandLineParser parser, Map<String, Signal> signals) {
+    public SignalWindow(Signal s, CommandLineParser parser) {
         this.signal = s;
         this.signal.setWindow(this);
 
@@ -66,7 +66,7 @@ public class SignalWindow {
         menuView.getItems().add(menuItemConsole);
 
         menuItemSave.setOnAction(e -> {
-            new SaveSignalDialog(parser, signals, s.getName());
+            new SaveSignalDialog(parser, s.getName());
         });
         menuItemExit.setOnAction(e -> {
             System.exit(0);
