@@ -7,14 +7,17 @@ import dialogs.AboutDialog;
 import dialogs.CalculationDialog;
 import dialogs.OpenSignalDialog;
 import dialogs.OperationsDialog;
+import dialogs.RecordDialog;
 import dialogs.SourceDialog;
 import dialogs.TransformationsDialog;
 import dialogs.WindowingDialog;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,6 +25,7 @@ import signals.Signal;
 
 public class Console {
     private final MenuBar menuBar;
+    private final ToolBar toolBar = new ToolBar();
     private final TextArea consoleText;
     private final TextField consoleInput;
     private final CommandLineParser parser;
@@ -90,7 +94,15 @@ public class Console {
         menuBar.getMenus().add(menuCommands);
         menuBar.getMenus().add(menuHelp);
         
+        Button recordButton = new Button("REC");
         
+        recordButton.setOnAction(event -> {
+            new RecordDialog(parser);
+        });
+
+        // Add buttons to the ToolBar
+        toolBar.getItems().add(recordButton);
+
         consoleText.setEditable(false);
         consoleInput.setPromptText("Enter command here");
 
@@ -104,6 +116,7 @@ public class Console {
         });
 
         v.getChildren().add(menuBar);
+        v.getChildren().add(toolBar);
         VBox.setVgrow(consoleText, Priority.ALWAYS);
         v.getChildren().add(consoleText);
         v.getChildren().add(consoleInput);
