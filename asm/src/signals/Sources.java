@@ -115,7 +115,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -145,7 +145,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(0);
         double t0 = parameters.get(1);
         t0 = t0 / 1000.0; /* t0 in sec */
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -163,7 +163,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -193,7 +193,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double t0 = parameters.get(2);
         t0 = t0 / 1000.0; /* t0 in sec */
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -212,7 +212,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -254,7 +254,7 @@ public class Sources extends SourcesBase {
                 Signal.REAL);
         Integer seed = cp.getInt(arguments, "Seed <0 .. 512>", 0, 512, 1);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -278,7 +278,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -298,7 +298,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -330,7 +330,7 @@ public class Sources extends SourcesBase {
         double offs = parameters.get(0);
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -356,7 +356,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -382,7 +382,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -402,7 +402,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -439,7 +439,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double phi0 = parameters.get(3);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -462,7 +462,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -490,7 +490,7 @@ public class Sources extends SourcesBase {
     public void exp(Signal s, List<Double> parameters) {
         double ampl = parameters.get(0);
         double T = parameters.get(1);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -511,7 +511,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -547,7 +547,7 @@ public class Sources extends SourcesBase {
         double ampl = parameters.get(1);
         double freq = parameters.get(2);
         double dutyCycle = parameters.get(3);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -568,7 +568,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 
@@ -596,7 +596,7 @@ public class Sources extends SourcesBase {
     public void ramp(Signal s, List<Double> parameters) {
         double offs = parameters.get(0);
         double ampl = parameters.get(1);
-        int sampleRate = s.getDataSampleRate() * 10;
+        int sampleRate = s.getDataSampleRate();
 
         double data[];
         if (s.getDataType() == Signal.IMAG)
@@ -614,7 +614,7 @@ public class Sources extends SourcesBase {
         short dtype = (short) cp.getInt(arguments, "Type <0=Real,1=Imag,2=Complex>", Signal.REAL, Signal.COMP,
                 Signal.REAL);
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
 

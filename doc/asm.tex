@@ -684,10 +684,10 @@ Currently the functions are limited to 1 record and 1 channel.
 \item data-type: 0=real, 1=imaginary, 2=complex
 \item N = number of elements = $2^{n}$
 Nmin = 128 (n=7), Nmax = 4096
-\item Smax = 65535, maximal sample-rate (in 10 Hz)
+\item Smax = 2147483647, maximal sample-rate (in Hz)
 \end{itemize}
 
-Sample-rate is always given in 10 (Hz).
+Sample-rate is given in (Hz).
 
 \paragraph{fdelta}:
 
@@ -697,7 +697,7 @@ Sample-rate is always given in 10 (Hz).
 \bc
 \begin{verbatim}
 command: : fdelta  signal,     A    ,    td (ms) , data-type,    n   , sample-rate
-default  :           a   ,    255   ,     0      ,     0    ,    9   ,   1024
+default  :           a   ,    255   ,     0      ,     0    ,    9   ,   10240
 range    :         <a-z> , <0-Amax> , <0-t(N-1)> ,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -709,7 +709,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fconstant  signal,     A    , data-type,    n   , sample-rate
-default  :              a   ,    255   ,     0    ,    9   ,   1024
+default  :              a   ,    255   ,     0    ,    9   ,   10240
 range    :            <a-z> , <0-Amax> ,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -723,7 +723,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fstep  signal,      B     ,     A    , tdelay(ms) , data-type,    n   , sample-rate
-default  :          a   ,      0     ,    255   ,     0      ,     0    ,    9   ,   1024
+default  :          a   ,      0     ,    255   ,     0      ,     0    ,    9   ,   10240
 range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <0-t(N-1)> ,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -737,7 +737,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fsquare  signal,      B     ,     A    ,     f    ,   dc   , data-type,    n   , sample-rate
-default  :            a   ,      0     ,    255   ,    100   ,   50   ,     0    ,    9   ,   1024
+default  :            a   ,      0     ,    255   ,    100   ,   50   ,     0    ,    9   ,   10240
 range    :          <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-100>,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -752,7 +752,7 @@ dc = duty cycle
 \bc
 \begin{verbatim}
 command: : framp  signal,      B     ,     A    ,data-type,    n   , sample-rate
-default  :          a   ,      0     ,    255   ,   0     ,    9   ,   1024
+default  :          a   ,      0     ,    255   ,   0     ,    9   ,   10240
 range    :        <a-z> , <Bmin-Bmax>, <0-Amax> ,  <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -766,7 +766,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : ftriangle  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
-default  :              a   ,      0     ,    255   ,    100   ,    0   ,       0  ,    9   ,   1024
+default  :              a   ,      0     ,    255   ,    100   ,    0   ,       0  ,    9   ,   10240
 range    :            <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -779,7 +779,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fsine  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
-default  :          a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   1024
+default  :          a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   10240
 range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -793,7 +793,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fsinc  signal,      B     ,     A    ,     f    , data-type,    n   , sample-rate
-default  :          a   ,      0     ,    255   ,    100   ,   0      ,    9   ,   1024
+default  :          a   ,      0     ,    255   ,    100   ,   0      ,    9   ,   10240
 range    :        <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> ,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -806,7 +806,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fcosine  signal,      B     ,     A    ,     f    ,   phi0 , data-type,    n   , sample-rate
-default  :            a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   1024
+default  :            a   ,      0     ,    255   ,    100   ,    0   ,   0      ,    9   ,   10240
 range    :          <a-z> , <Bmin-Bmax>, <0-Amax> , <1-fmax> , <0-2pi>,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -819,7 +819,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fexp     signal,     A    , t63.2(ms), data-type,    n   , sample-rate
-default  :            a   ,    255   ,    0.10  ,     0    ,    9   ,       1024
+default  :            a   ,    255   ,    0.10  ,     0    ,    9   ,   10240
 range    :          <a-z> , <0-Amax> ,<1e-6-1e6>,   <0-2>  ,  <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -830,7 +830,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : fnoise  signal,     A    , data-type,  seed  ,   n   , sample-rate
-default  :           a   ,    255   ,     0    ,    1   ,   9   ,    1024
+default  :           a   ,    255   ,     0    ,    1   ,   9   ,    10240
 range    :         <a-z> , <0-Amax> ,   <0-2>  , <0-512>, <7-12>,  <1-Smax>
 domain   : time
 \end{verbatim}
@@ -861,7 +861,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : wblock   signal,    n    , samplerate
-default  :            a   ,    9    ,    1024
+default  :            a   ,    9    ,    10240
 range    :          <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -874,7 +874,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : whanning   signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -887,7 +887,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : whamming   signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -902,7 +902,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : wgauss     signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -915,7 +915,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : wblackman  signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -930,7 +930,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : wkaiser    signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -943,7 +943,7 @@ domain   : time
 \bc
 \begin{verbatim}
 command: : wtriangle  signal,    n    , samplerate
-default  :              a   ,    9    ,    1024
+default  :              a   ,    9    ,    10240
 range    :            <a-z> ,  <7-12> ,  (1-Smax)
 domain   : time
 \end{verbatim}
@@ -1239,7 +1239,7 @@ fixed size of 512 bytes.
 	     \end{description}
 \item[9-10] Pointer to real part
 \item[11-12] Pointer to imaginary part
-\item[13] Samplerate in $10^{1} (Hz)$. max 65535.
+\item[13] Samplerate in $(Hz)$. max 65535.
 \item[14-32] Reserved
 \item[33-128] Numeric data (type double)
 \item[129-165] ASM ID string (ASCII text)

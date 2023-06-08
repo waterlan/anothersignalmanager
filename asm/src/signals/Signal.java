@@ -43,11 +43,11 @@ public class Signal {
     public static final short BPS_DOUBLE = 6464;
     public static final short BPS_SAMPLE = 6464;
 
-    public static final int SAMPLE_RATE = 1024;
+    public static final int SAMPLE_RATE = 10240;
     public static final int MIN_N = 7; /* Minimal length of a record = 256 */
     public static final int MAX_N = 12; /* Maximal length of a record = 4096 */
 
-    public static final String ASM_ID_STRING = "ASM 2.0";
+    public static final String ASM_ID_STRING = "ASM 3.0";
 
     AsmHeader header;
     int Wlenx; /* x - dimension */
@@ -86,7 +86,7 @@ public class Signal {
         short domain_id; /* 0=time, 1=freq, 2=ampl, 3=magnitude, 4= fase */
         short datatype_id; /* 0=real, 1=imaginary, 2= complex */
         ComplexArray data; /* pointer to real data */
-        int sample_rate; /* Sample-rate in 10 Hz */
+        int sample_rate; /* Sample-rate in Hz */
         short[] reserved; /* Reserved */
         double[] numerical;
         byte[] asm_id_string;
@@ -519,6 +519,9 @@ public class Signal {
             for (int i = 0; i < header.numerical.length; i++)
                 header.numerical[i] = in.readDouble();
             in.read(header.asm_id_string);
+            if(this.getDataIdString().equals("ASM 2.0")) {
+                this.setDataSampleRate(this.getDataSampleRate()*10);
+            }
             in.read(header.signal_name);
             in.read(header.user_text);
             in.read(header.date);

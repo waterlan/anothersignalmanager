@@ -202,7 +202,7 @@ public class Windowing extends SourcesBase {
 
         String signalname = cp.getString(arguments, "Signal", window.substring(1));
         int n = cp.getInt(arguments, "Number of elements (2^n)", Signal.MIN_N, Signal.MAX_N, DEF_N);
-        int sample = cp.getInt(arguments, "Samplerate in 10Hz", 1, Short.MAX_VALUE, Signal.SAMPLE_RATE);
+        int sample = cp.getInt(arguments, "Samplerate in Hz", 1, Integer.MAX_VALUE, Signal.SAMPLE_RATE);
 
         int number = (int) Math.pow(2, n);
         Signal im = signals.get(signalname); /* Find the correct signal */

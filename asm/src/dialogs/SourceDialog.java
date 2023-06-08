@@ -110,7 +110,7 @@ public class SourceDialog {
         nrOfElementsComboBox.getSelectionModel().select("9");
 
 
-        samplerateLabel = new Label("Sample rate (10 Hz):");
+        samplerateLabel = new Label("Sample rate (Hz):");
         samplerateText = new TextField();
         samplerateText.setPromptText(Integer.toString(Signal.SAMPLE_RATE));
 
