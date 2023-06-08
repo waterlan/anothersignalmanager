@@ -479,6 +479,7 @@ public class Signal {
                 out.writeShort(r);
             for (double n : header.numerical)
                 out.writeDouble(n);
+            this.setDataIdString(ASM_ID_STRING);
             out.write(header.asm_id_string);
             out.write(header.signal_name);
             out.write(header.user_text);
