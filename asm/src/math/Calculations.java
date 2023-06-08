@@ -555,8 +555,8 @@ public class Calculations extends MathBase {
         outputSignal.setData(data);
 
         attenuation = Math.pow(10.0, attenuation / 10);
-        int left = (int) ((leftfreq / (10.0 * (double) signal.getDataSampleRate())) * (double) dataLength);
-        int right = (int) ((rightfreq / (10.0 * (double) signal.getDataSampleRate())) * (double) dataLength);
+        int left = (int) ((leftfreq / (double) signal.getDataSampleRate()) * (double) dataLength);
+        int right = (int) ((rightfreq / (double) signal.getDataSampleRate()) * (double) dataLength);
         if (left < 0.0)
             left = 0;
 
@@ -592,10 +592,10 @@ public class Calculations extends MathBase {
                     signalname, signal.getDataDomainToString()));
         }
         int left = 0, right = signal.getDataLength();
-        double leftfreq = 1.0, rightfreq = (signal.getDataSampleRate() / 2) * 10;
+        double leftfreq = 1.0, rightfreq = signal.getDataSampleRate() / 2;
         double attenuation = 50.0;
         if (signal.getDataDomain() == Signal.FREQ) {
-            double maxValue = (signal.getDataSampleRate() / 2) * 10;
+            double maxValue = signal.getDataSampleRate() / 2;
             leftfreq = cp.getDouble(arguments, "left (frequency)", 1.0, maxValue, 1.0);
             rightfreq = cp.getDouble(arguments, "right (frequency)", leftfreq, maxValue, maxValue);
             attenuation = cp.getDouble(arguments, "attenuation", 0.0, 100.0, 50.0);

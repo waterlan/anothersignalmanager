@@ -321,7 +321,7 @@ public class SignalWindow {
         double distance = PIXEL_DIST;
 
         int nrOfTextLabels = (int) ((length / distance) + 1);
-        double totalTime = (double) s.getDataLength() / (double) (s.getDataSampleRate() * 10);
+        double totalTime = (double) s.getDataLength() / (double) s.getDataSampleRate();
         double deltaT = totalTime / (double) (nrOfTextLabels - 1);
         distance = (double) length / (double) (nrOfTextLabels - 1);
 
@@ -433,7 +433,7 @@ public class SignalWindow {
         length = s.getWindowWidth() - LEFT_XOFFS - RIGHT_XOFFS; /* Length horizontal axis */
         height = s.getWindowHeight() - TOP_YOFFS - BOTTOM_YOFFS; /* Length vertical axis */
         distance = PIXEL_DIST; /* Number of pixels between to numbers */
-        sampleRate = s.getDataSampleRate() * 10; /* Samplerate in Hz */
+        sampleRate = s.getDataSampleRate(); /* Samplerate in Hz */
         int maxy = s.getWindowHeight();
 
         gc.setStroke(Color.RED);
@@ -628,13 +628,13 @@ public class SignalWindow {
         gc.strokeText(nm, length / 2, fontHeight);
 
         distance = PIXEL_DIST; /* Nr of pixels between two numbers */
-        sampleRate = s.getDataSampleRate() * 10; /* Sample rate in Hz */
+        sampleRate = s.getDataSampleRate(); /* Sample rate in Hz */
 
         nrOfText = (int) ((length / distance) + 1); /* Nr of numbers horizontal axis */
         deltaFreq = (double) (sampleRate) / (double) (nrOfText - 1); /* freq between two numbers */
         distance = (double) (length) / (double) (nrOfText - 1); /* Nr of pixels between two numbers */
 
-        unit = 1e3; /* Choose unit 1000(kHz) */
+        unit = 1e3; /* Choose unit 1000 (kHz) */
         deltaFreq = deltaFreq / unit;
 
         gc.setStroke(Color.GRAY);
@@ -918,7 +918,7 @@ public class SignalWindow {
         gc.strokeText(nm, (length / 2), fontHeight);
 
         distance = PIXEL_DIST; /* Number of pixels between two numbers */
-        sampleRate = s.getDataSampleRate() * 10; /* Samplerate in Hz */
+        sampleRate = s.getDataSampleRate(); /* Samplerate in Hz */
 
         nrOfTextLabels = (int) ((length / distance) + 1); /* Amount of numbers horizontal axis */
         delta_f = (double) (sampleRate) / (double) (nrOfTextLabels - 1); /* freq between two numbers */
@@ -1077,7 +1077,7 @@ public class SignalWindow {
         length = s.getWindowWidth() - LEFT_XOFFS - RIGHT_XOFFS; /* Length horizontal axis */
         height = s.getWindowHeight() - TOP_YOFFS - BOTTOM_YOFFS; /* Length vertical axis */
         distance = PIXEL_DIST; /* Number of pixels between to numbers */
-        sampleRate = s.getDataSampleRate() * 10; /* Samplerate in Hz */
+        sampleRate = s.getDataSampleRate(); /* Samplerate in Hz */
         int maxy = s.getWindowHeight();
 
         gc.setStroke(Color.RED);
