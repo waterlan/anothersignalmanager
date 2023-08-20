@@ -1,6 +1,8 @@
 2023: Version 3.0.0
 
    - Samplerate is in Hz instead of 10 Hz.
+   - Fixed problem that magnitude and phase commands could not be run on time
+     domain signals.
 
 Dec 17 2022: Version 2.0.1
 

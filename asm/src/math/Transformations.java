@@ -236,7 +236,7 @@ public class Transformations extends MathBase {
         {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
-        if (signal.getDataDomain() != Signal.FREQ) {
+        if (signal.getDataDomain() != Signal.FREQ && signal.getDataDomain() != Signal.TIME) {
             throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
                     signalname, signal.getDataDomainToString()));
         }
@@ -342,7 +342,7 @@ public class Transformations extends MathBase {
         {
             throw new SignalDoesNotExist("Signal \"" + signalname + "\" does not exist.");
         }
-        if (signal.getDataDomain() != Signal.FREQ) {
+        if (signal.getDataDomain() != Signal.FREQ && signal.getDataDomain() != Signal.TIME) {
             throw new WrongDomain(String.format("Command \"%s\" can't operate on signal \"%s\" of domain %s.", command,
                     signalname, signal.getDataDomainToString()));
         }
