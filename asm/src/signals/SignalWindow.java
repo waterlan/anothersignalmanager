@@ -1204,19 +1204,19 @@ public class SignalWindow {
         s.setMinimum(min);
         s.setMaximum(max);
         nrOfTextLabels = (int) ((length / distance) + 1); /* Amount of numbers horizontal axis */
-        delta_a = (double) (max - min) / (double) (nrOfTextLabels - 1); /* ampl between two numbers */
+        delta_a = (double) (s.getRealMaximum() - s.getRealMinimum()) / (double) (nrOfTextLabels - 1); /* ampl between two numbers */
         distance = (double) (length) / (double) (nrOfTextLabels - 1); /* Amount of pixels between two numbers */
 
         gc.setStroke(Color.GRAY);
         gc.strokeText("--> Magnitude", (length / 2), maxy - fontHeight);
 
         /* print 0 x-axis text */
-        String ch = String.format("%5.1f", min);
+        String ch = String.format("%5.1f", s.getRealMinimum());
         gc.strokeText(ch, LEFT_XOFFS, maxy - 28);
 
         int count = nrOfTextLabels - 1;
 
-        xValue = (delta_a * count + min);
+        xValue = (delta_a * count + s.getRealMinimum());
         ch = String.format("%5.1f", xValue);
         gc.strokeText(ch, (int) (count * distance + LEFT_XOFFS - 25), (int) (maxy - 28));
 
@@ -1253,7 +1253,7 @@ public class SignalWindow {
             gc.strokeText(ch, (LEFT_XOFFS - 80), (int) -(i * distance - TOP_YOFFS - 5));
         }
 
-        gc.strokeText("%%", LEFT_XOFFS, TOP_YOFFS - 10);
+        gc.strokeText("%", LEFT_XOFFS, TOP_YOFFS - 10);
 
         for (int i = 1; i < nrOfTextLabels - 1; i++) {
             gc.strokeLine(LEFT_XOFFS + 1, -(i * distance - TOP_YOFFS), length + LEFT_XOFFS - 1,
