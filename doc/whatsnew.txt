@@ -1,4 +1,4 @@
-2023: Version 3.0.0
+Aug 27 2023: Version 2.1.0
 
    - Samplerate is in Hz instead of 10 Hz.
    - Fixed histogram plot, wrong values at x-axis.

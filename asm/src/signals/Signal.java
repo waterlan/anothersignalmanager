@@ -47,7 +47,7 @@ public class Signal {
     public static final int MIN_N = 7; /* Minimal length of a record = 256 */
     public static final int MAX_N = 12; /* Maximal length of a record = 4096 */
 
-    public static final String ASM_ID_STRING = "ASM 3.0";
+    public static final String ASM_ID_STRING = "ASM 2.1";
 
     AsmHeader header;
     int Wlenx; /* x - dimension */
