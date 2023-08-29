@@ -3,6 +3,7 @@ package dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import audio.Recorder;
 import console.CommandLineParser;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Button;
@@ -90,6 +91,7 @@ public class RecordDialog {
         
         startButton.setOnAction(event -> {
             
+            Recorder recorder = new Recorder(Integer.parseInt(samplerateText.getText()));
         });
         
         stopButton.setOnAction(event -> {

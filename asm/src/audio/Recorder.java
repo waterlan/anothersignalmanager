@@ -5,8 +5,12 @@ import java.io.ByteArrayOutputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+
+import signals.Signal;
 
 // See https://docs.oracle.com/javase/tutorial/sound/capturing.html
 
@@ -14,20 +18,34 @@ public class Recorder {
 
     private TargetDataLine line = null;
     private boolean stopped = false;
+    private float sampleRate = Signal.SAMPLE_RATE;
 
     public Recorder() {
-        // TODO Auto-generated constructor stub
+    }
+
+    public Recorder(int sampleRate) {
+        this.setSampleRate(sampleRate);
     }
 
     AudioFormat getAudioFormat() {
-        float sampleRate = 16000;
         int sampleSizeInBits = 8;
-        int channels = 2;
+        int channels = 1;
         boolean signed = true;
         boolean bigEndian = true;
-        AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
+        AudioFormat format = new AudioFormat(getSampleRate(), sampleSizeInBits, channels, signed, bigEndian);
         return format;
     }
+
+    LineListener lineListener = new LineListener() {
+
+        @Override
+        public void update(LineEvent event) {
+            // TODO Auto-generated method stub
+            if (event.getType() == LineEvent.Type.STOP || event.getType() == LineEvent.Type.CLOSE) {
+                stopped = true;
+            }
+        }
+    };
 
     public void getLine() {
         AudioFormat format = getAudioFormat();
@@ -39,6 +57,7 @@ public class Recorder {
         // Obtain and open the line.
         try {
             line = (TargetDataLine) AudioSystem.getLine(info);
+            line.addLineListener(lineListener);
             line.open(format);
         } catch (LineUnavailableException e) {
             // TODO Auto-generated catch block
@@ -63,5 +82,13 @@ public class Recorder {
             // Save this chunk of data.
             out.write(data, 0, numBytesRead);
         }
+    }
+
+    public float getSampleRate() {
+        return sampleRate;
+    }
+
+    public void setSampleRate(float sampleRate) {
+        this.sampleRate = sampleRate;
     }
 }
