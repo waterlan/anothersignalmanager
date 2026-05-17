@@ -97,8 +97,9 @@ ASM is Public Domain software.
 # Contact/Download
 
 ASM and a manual can be downloaded from:
-https://waterlan.home.xs4all.nl/asm.html
-GitHub: https://github.com/waterlan/anothersignalmanager
+https://waterlander.net/asm/
+GitHub project: https://github.com/waterlan/anothersignalmanager
+GitHub website: https://waterlan.github.io/anothersignalmanager/
 
 Erwin Waterlander
 Eindhoven
