@@ -14,8 +14,8 @@ public class AboutDialog {
 
     private final Label nameLabel = new Label("ASM");
     private final Label fullNameLabel = new Label("Another Signal Manager");
-    private final Label versionLabel = new Label("version 2.1.0 (Aug 27 2023)");
-    private final TextField urlLabel = new TextField("https://waterlan.home.xs4all.nl/asm.html");
+    private final Label versionLabel = new Label("version 2.1.1 (May 17 2026)");
+    private final TextField urlLabel = new TextField("https://waterlander.net/asm/");
 
     public AboutDialog() {
         Dialog<List<String>> dialog = new Dialog<List<String>>();
