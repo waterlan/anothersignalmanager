@@ -218,22 +218,42 @@ public class CommandLineParser {
             } else if (command.equals("exit") || command.equals("quit")) {
                 System.exit(0);
             } else if (PlotCommands.plotcommands.containsKey(command)) {
+                String oldName = "";
+                String newName = "";
+                if (command.equals("rename") && argList.size() >= 2) {
+                    oldName = argList.get(0);
+                    newName = argList.get(1);
+                }
                 Signal s = plotCommands.PlotCommandsCi(argList, command);
+                if (command.equals("rename")) {
+                    if (s != null && !newName.equals(oldName)) {
+                        console.removeSignal(oldName);
+                    }
+                }
+                console.addSignal(s);
+                if (command.equals("display")) {
+                    console.setSignal(s.getName());
+                }
                 showSignal(s, command.equals("display"));
             } else if (Sources.functions.containsKey(command)) {
                 Signal s = sources.SourcesCi(argList, command);
+                console.addSignal(s);
                 showSignal(s, false);
             } else if (Windowing.windows.containsKey(command)) {
                 Signal s = windowing.WindowCi(argList, command);
+                console.addSignal(s);
                 showSignal(s, false);
             } else if (Calculations.calculations.containsKey(command)) {
                 Signal s = calculations.CalculateCi(argList, command);
+                console.addSignal(s);
                 showSignal(s, false);
             } else if (Transformations.transformations.containsKey(command)) {
                 Signal s = transformations.TransformationCi(argList, command);
+                console.addSignal(s);
                 showSignal(s, false);
             } else if (ConvCorr.convcorr.containsKey(command)) {
                 Signal s = convcorr.ConvCorrCi(argList, command);
+                console.addSignal(s);
                 showSignal(s, false);
             } else {
                 println("error: command not found.");

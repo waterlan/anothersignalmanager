@@ -259,7 +259,22 @@ public class SignalWindow {
         if (canvas.getWidth() < stage.getWidth()
                 || (canvas.getWidth() > stage.getWidth() && canvas.getWidth() < screenWidth * 0.8))
             stage.setWidth(canvas.getWidth());
+        // Show stage and attempt to bring it to the foreground / give it focus.
+        // Use multiple mechanisms to increase the chance the window becomes active on all platforms.
         stage.show();
+        // Request to front and focus
+        stage.toFront();
+        stage.requestFocus();
+        // Some platforms/windows managers ignore toFront/requestFocus. A common workaround
+        // is to toggle always-on-top briefly which forces the window above others.
+        try {
+            boolean wasAlwaysOnTop = stage.isAlwaysOnTop();
+            stage.setAlwaysOnTop(true);
+            // ensure the change has effect
+            stage.setAlwaysOnTop(wasAlwaysOnTop);
+        } catch (Exception ex) {
+            // ignore any platform-specific exceptions
+        }
     }
 
     private int getCanvasWidth(double newHScale) {
